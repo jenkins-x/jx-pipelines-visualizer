@@ -1,0 +1,101 @@
+# Default values for the Helm Chart
+
+fullnameOverride:
+nameOverride:
+
+config:
+  archivedLogsURLTemplate:
+  namespace: jx
+  resyncInterval: 60s
+  logLevel: INFO
+
+image:
+  repository: ghcr.io/dailymotion/jx-pipelines-visualizer
+  # If no tag, fallback to the Chart's AppVersion
+  tag:
+  pullPolicy:
+
+deployment:
+  replicas: 1
+  revisionHistoryLimit: 2
+  labels: {}
+  annotations: {}
+
+pod:
+  resources:
+    requests:
+      cpu: "0.2"
+      memory: 128M
+    limits:
+      cpu: "1"
+      memory: 512M
+  labels: {}
+  annotations: {}
+  activeDeadlineSeconds:
+  enableServiceLinks: false
+  terminationGracePeriodSeconds:
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  hostAliases: []
+  schedulerName:
+
+service:
+  port: 80
+  type:
+  loadBalancerIP:
+  labels: {}
+  annotations: {}
+
+ingress:
+  enabled: false
+  labels: {}
+  annotations: {}
+
+  #hosts:
+  #- pipelines.example.com
+  hosts: []
+
+  tls:
+    enabled: false
+
+    #secrets:
+    #  embedded:
+    #    b64encodedCertificate: e30k
+    #    b64encodedCertificateKey: e30k
+    #  existing-secret-name: {}
+    secrets: {}
+
+role:
+  rules:
+  - apiGroups:
+    - jenkins.io
+    resources:
+    - pipelineactivities
+    - pipelinestructures
+    verbs:
+    - list
+    - watch
+    - get
+  - apiGroups:
+    - tekton.dev
+    resources:
+    - pipelineruns
+    verbs:
+    - list
+    - watch
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - list
+    - watch
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - pods/log
+    verbs:
+    - get

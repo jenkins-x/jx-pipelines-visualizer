@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jxpipelines.fullname" . }}
+  labels:
+    {{- include "jxpipelines.labels" . | nindent 4 }}
+    {{- with .Values.service.labels }}
+    {{ tpl (toYaml .) $ | trim | indent 4 }}
+    {{- end }}
+  {{- with .Values.service.annotations }}
+  annotations: {{- tpl (toYaml .) $ | trim | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.service.type }}
+  type: {{ . }}
+  {{- end }}
+  {{- with .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+  - name: http
+    port: {{ .Values.service.port }}
+    targetPort: http
+  selector: {{- include "jxpipelines.labels.selector" . | nindent 4 }}

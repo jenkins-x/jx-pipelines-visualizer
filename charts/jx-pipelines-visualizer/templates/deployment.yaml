@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jxpipelines.fullname" . }}
+  labels:
+    {{- include "jxpipelines.labels" . | nindent 4 }}
+    {{- with .Values.deployment.labels }}
+    {{ tpl (toYaml .) $ | trim | indent 4 }}
+    {{- end }}
+  {{- with .Values.deployment.annotations }}
+  annotations: {{- tpl (toYaml .) $ | trim | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
+  selector:
+    matchLabels: {{- include "jxpipelines.labels.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "jxpipelines.labels" . | nindent 8 }}
+        {{- with .Values.pod.labels }}
+        {{ tpl (toYaml .) $ | trim | indent 8 }}
+        {{- end }}
+      {{- with .Values.pod.annotations }}
+      annotations: {{- tpl (toYaml .) $ | trim | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        {{- with .Values.image.pullPolicy }}
+        imagePullPolicy: {{ . }}
+        {{- end }}
+        args:
+        {{- with .Values.config.namespace }}
+        - -namespace
+        - {{ . }}
+        {{- end }}
+        {{- with .Values.config.resyncInterval }}
+        - -resync-interval
+        - {{ . }}
+        {{- end }}
+        {{- with .Values.config.archivedLogsURLTemplate }}
+        - -archived-logs-url-template
+        - {{ . }}
+        {{- end }}
+        {{- with .Values.config.logLevel }}
+        - -log-level
+        - {{ . }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        {{- with .Values.pod.resources }}
+        resources: {{- toYaml . | trim | nindent 10 }}
+        {{- end }}
+      serviceAccountName: {{ include "jxpipelines.fullname" . }}
+      enableServiceLinks: {{ .Values.pod.enableServiceLinks }}
+      {{- with .Values.pod.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ . }}
+      {{- end }}
+      {{- with .Values.pod.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+      {{- end }}
+      {{- with .Values.pod.affinity }}
+      affinity: {{- tpl (toYaml .) $ | trim | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.nodeSelector }}
+      nodeSelector: {{- tpl (toYaml .) $ | trim | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.tolerations }}
+      tolerations: {{- tpl (toYaml .) $ | trim | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.hostAliases }}
+      hostAliases: {{- tpl (toYaml .) $ | trim | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.schedulerName }}
+      schedulerName: {{ tpl . $ | trim }}
+      {{- end }}

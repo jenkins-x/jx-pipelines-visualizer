@@ -1,0 +1,31 @@
+pre#logs {
+    margin: 0;
+    padding: 10px;
+    font-family: "Monaco", monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 19px;
+    background: black;
+    color: #d6d6d6;
+    width: fit-content;
+}
+
+.status-succeeded {
+    background: lightgreen;
+}
+.status-running {
+    background: lightblue;
+}
+.status-failed {
+    background: red;
+}
+.status-pending {
+    background: gray;
+}
+
+.pipeline-metadata {
+    margin: 10px;
+}
+.pipeline-metadata span {
+    margin: 2px;
+}

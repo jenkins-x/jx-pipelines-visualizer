@@ -1,0 +1,55 @@
+{{- if .Values.ingress.enabled -}}
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "jxpipelines.fullname" . }}
+  labels:
+    {{- include "jxpipelines.labels" . | nindent 4 }}
+    {{- with .Values.ingress.labels }}
+    {{ tpl (toYaml .) $ | trim | indent 4 }}
+    {{- end }}
+  {{- with .Values.ingress.annotations }}
+  annotations: {{- tpl (toYaml .) $ | trim | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  {{- range .Values.ingress.hosts }}
+  - host: {{ tpl . $ }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ include "jxpipelines.fullname" $ }}
+          servicePort: http
+  {{- end }}
+
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+  {{- range $name, $secret := .Values.ingress.tls.secrets }}
+  {{- if and $secret.b64encodedCertificate $secret.b64encodedCertificateKey }}
+  - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
+  {{- else }}
+  - secretName: {{ $name }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+
+{{- if .Values.ingress.tls.enabled -}}
+{{- range $name, $secret := .Values.ingress.tls.secrets -}}
+{{- if and $secret.b64encodedCertificate $secret.b64encodedCertificateKey }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
+  labels: {{- include "jxpipelines.labels" $ | nindent 4 }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ $secret.b64encodedCertificate | quote }}
+  tls.key: {{ $secret.b64encodedCertificateKey | quote }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- end -}}

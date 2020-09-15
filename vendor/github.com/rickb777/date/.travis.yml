@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - 1.12.6
+
+install:
+  - go get -t -v ./...
+  - go get github.com/mattn/goveralls
+
+script:
+  - ./build+test.sh
+

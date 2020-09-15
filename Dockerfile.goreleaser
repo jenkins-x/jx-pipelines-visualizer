@@ -1,0 +1,14 @@
+# Dockerfile used by GoReleaser
+# Requires the binary to be pre-built
+
+FROM alpine:3.12
+
+RUN apk add --no-cache ca-certificates
+
+COPY jx-pipelines-visualizer /usr/local/bin/
+COPY web/static /usr/share/jx-pipelines-visualizer/web/static
+COPY web/templates /usr/share/jx-pipelines-visualizer/web/templates
+
+WORKDIR /usr/share/jx-pipelines-visualizer
+
+ENTRYPOINT [ "jx-pipelines-visualizer" ]
