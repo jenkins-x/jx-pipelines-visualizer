@@ -4,6 +4,7 @@ fullnameOverride:
 nameOverride:
 
 config:
+  # gs://BUCKET_NAME/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch \"pr\"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log
   archivedLogsURLTemplate:
   namespace: jx
   resyncInterval: 60s

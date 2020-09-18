@@ -19,6 +19,31 @@ It's a web server written in Go, producing HTML content.
 - Create/Update/Delete operations. It is meant to be a read-only web UI
 - Anything in JX which is not related to the pipelines
 
+## Usage
+
+### Installation
+
+You can use the Helm Chart provided in this repository:
+
+```
+helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
+helm install jx-pipelines-visualizer/jx-pipelines-visualizer \
+  --name jx-pipelines-visualizer \
+  --namespace jx
+```
+
+### Configuration
+
+See the [values.yaml](charts/jx-pipelines-visualizer/values.yaml) file for the configuration.
+
+If you are not using the Helm Chart, the binary is using CLI flags only - no config files. You can run ``
+
+### Running locally
+
+```
+go run cmd/server/main.go
+```
+
 ## How It Works
 
 It uses the "informer" Kubernetes pattern to keep a local cache of the Jenkins X PipelineActivities, and index them in an in-memory [Bleve](http://blevesearch.com/) index.
