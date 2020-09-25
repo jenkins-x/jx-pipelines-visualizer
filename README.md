@@ -1,10 +1,13 @@
 # Jenkins X Pipelines Visualizer
 
-This is a Web UI for Jenkins X, with a clear goal: **visualize the pipelines - and their logs**.
+This is a Web UI for [Jenkins X](https://jenkins-x.io/), with a clear goal: **visualize the pipelines - and their logs**.
+
+See the [announcement blog post](https://jenkins-x.io/blog/2020/09/23/jx-pipelines-visualizer/) for more details and a demo.
 
 ## Current Status
 
-This project has been started in September 2020, and shared after a couple hours of work. It's working - and is deployed and used at Dailymotion - even if the UI is very basic for the moment.
+This project has been started in September 2020 and shared after a couple of hours of work. It's working - and is deployed and used at [Dailymotion](https://www.dailymotion.com/) - even if the UI is very basic for the moment.
+
 Note that it is being used on GKE with logs stored in a GCS bucket.
 
 ### Roadmap
@@ -18,7 +21,7 @@ Note that it is being used on GKE with logs stored in a GCS bucket.
 - very fast: get your logs in milliseconds, not seconds. Yes, I'm looking at you, JXUI.
 - either retrieve the build logs from the persistent storage (tested with GCS), or stream them from the running pods if the pipeline is still running.
 - retrieve the build logs even for the garbage-collected pipelines (the JXUI just returns 404)
-- read only. Only requires READ permissions on the JX and Tekton Pipelines CRDs
+- read-only. Only requires READ permissions on the JX and Tekton Pipelines CRDs
 - URLs backward-compatible with JXUI - so that you can easily swap the JXUI URL for the jx-pipelines-visualizer one in the Lighthouse config, and have Lighthouse set links to jx-pipelines-visualizer in GitHub Pull Requests.
 
 ### Out of scope
@@ -29,33 +32,78 @@ Note that it is being used on GKE with logs stored in a GCS bucket.
 - Create/Update/Delete operations. It is meant to be a read-only web UI
 - Anything in JX which is not related to the pipelines
 
-## Usage
+## Installation
 
-### Installation
+### With Jenkins X v2
 
-You can use the Helm Chart provided in this repository:
+In the Git repository for your dev environment:
+
+- Update the `env/requirements.yaml` file with the following:
+  ```
+  - name: jx-pipelines-visualizer
+    repository: https://dailymotion.github.io/jx-pipelines-visualizer/charts/
+    version: 0.0.3
+  ```
+- Create a new file `env/jx-pipelines-visualizer/values.tmpl.yaml` with the following content:
+  ```
+  {{- if .Requirements.storage.logs.enabled }}
+  config:
+    archivedLogsURLTemplate: >-
+      {{ .Requirements.storage.logs.url }}{{`/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch "pr"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log`}}
+  {{- end }}
+
+  ingress:
+    enabled: true
+    hosts:
+      - pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}
+    {{- if .Requirements.ingress.tls.enabled }}
+    tls:
+      enabled: true
+      secrets:
+        # re-use the existing tls secret managed by jx
+        {{- if .Requirements.ingress.tls.production }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-p: {}
+        {{- else }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-s: {}
+        {{- end }}
+    {{- end }}
+    annotations:
+      kubernetes.io/ingress.class: nginx
+  ```
+- If you want [Lighthouse](https://github.com/jenkins-x/lighthouse) to add links to your jx-pipelines-visualizer instance from your Pull/Merge Request checks, update the `env/lighthouse-jx/values.tmpl.yaml` file and add the following:
+  ```
+  env:
+    LIGHTHOUSE_REPORT_URL_BASE: "https://pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}"
+  ```
+
+This will expose the UI at `pipelines.your.domain.tld` - without any auth. You can add [basic auth with a few annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - re-using the Jenkins X Auth Secret:
+```
+nginx.ingress.kubernetes.io/auth-type: basic
+nginx.ingress.kubernetes.io/auth-secret: jx-basic-auth
+```
+
+### With Helm v3
 
 ```
-helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
-
-# for Helm 3
-helm install jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-Visualizer
-
-# for Helm 2
-helm install --name jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-visualizer
+$ helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
+$ helm install jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-Visualizer
 ```
 
-If you want to install it in your Jenkins X cluster, you might want to edit your "dev env" git repository to install the chart through gitops.
+### With Helm v2
 
-If you want [Lighthouse](https://github.com/jenkins-x/lighthouse) to add links to your jx-pipelines-visualizer instance from your Pull/Merge Request checks, you can set the `LIGHTHOUSE_REPORT_URL_BASE` environment variable in the [lighthouse-jx-controller](https://github.com/jenkins-x/lighthouse-jx-controller) Chart - see [the source code](https://github.com/jenkins-x/lighthouse-jx-controller/blob/master/pkg/engines/jx/controller.go) for more details.
+```
+$ helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
+$ helm repo update
+$ helm install --name jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-visualizer
+```
 
-### Configuration
+## Configuration
 
 See the [values.yaml](charts/jx-pipelines-visualizer/values.yaml) file for the configuration.
 
 If you are not using the Helm Chart, the binary is using CLI flags only - no config files. You can run `jx-pipelines-visualizer -h` to see all the flags.
 
-### Running locally
+## Running locally
 
 ```
 go run cmd/server/main.go
