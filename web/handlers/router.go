@@ -35,6 +35,7 @@ type Router struct {
 func (r Router) Handler() (http.Handler, error) {
 	r.render = render.New(render.Options{
 		Directory:     "web/templates",
+		Layout:        "layout",
 		IsDevelopment: true,
 		Funcs: []htmltemplate.FuncMap{
 			sprig.HtmlFuncMap(),

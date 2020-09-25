@@ -1,0 +1,17 @@
+<html>
+<head>
+    {{ partial "css" }}
+    <link rel="stylesheet" href="https://unpkg.com/@clr/ui/clr-ui.min.css" />
+    <link href="/static/app.css" type="text/css" rel="stylesheet">
+    {{ partial "js" }}
+</head>
+<body>
+    <div class="menu-bar"></div>
+    <main class="main-container">
+        <header class="top-header">
+            {{ partial "header" }}
+        </header>
+        {{ yield }}
+    </main>
+</body>
+</html>

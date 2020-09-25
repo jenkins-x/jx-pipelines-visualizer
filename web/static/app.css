@@ -1,3 +1,93 @@
+.menu-bar {
+    background-color: #040749;
+    width: 50px;
+    height: 100%;
+    position: fixed;
+}
+
+.top-header {
+    background-color: #ffffff;
+    font-family: 'Helvetica Neue';
+    height: 75px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10px;
+    margin-bottom: 20px;
+}
+
+.top-header input {
+    margin: auto;
+    width: 250px;
+    border: 1px solid #f4f7fa;
+    border-radius: 5px;
+    color: #f4f7fa;
+    height: 30px;
+}
+
+.top-header .header-title {
+    margin: auto;
+    margin-left: 0;
+    line-height: 1;
+}
+
+.main-container {
+    background-color: #f3f6fa;
+    padding-left: 50px;
+    height: 100%;
+}
+
+.in-building {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px 30px;
+    justify-content: space-between;
+}
+
+.pipeline-cards {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pipeline-card {
+    background-color: #6873f9;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 7px;
+    padding: 10px;
+    color: #fff;
+}
+
+.pipeline-card:odd {
+    background-color: #6873f9;
+    color: #fff;
+}
+
+.pipeline-card:even {
+    background-color: #ffffff;
+    color: #6873f9;
+}
+
+.repository {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.pipeline {
+    font-weight: 200;
+    margin-bottom: 10px;
+}
+
+#dataTable_wrapper {
+    background-color: #fff;
+    padding: 20px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue';
+}
+
 pre#logs {
     margin: 0;
     padding: 10px;
@@ -7,25 +97,41 @@ pre#logs {
     line-height: 19px;
     background: black;
     color: #d6d6d6;
-    width: fit-content;
+    overflow-x: scroll;
 }
 
 .status-succeeded {
-    background: lightgreen;
+    color: lightgreen;
 }
 .status-running {
-    background: lightblue;
+    color: lightblue;
 }
 .status-failed {
-    background: red;
+    color: red;
 }
 .status-pending {
-    background: gray;
+    color: gray;
 }
 
 .pipeline-metadata {
-    margin: 10px;
+    margin: auto;
 }
+
 .pipeline-metadata span {
     margin: 2px;
+}
+
+.owner-img {
+    border-radius: 5px;
+    width: 40px;
+}
+
+a.repository-link {
+    color: #fff
+}
+
+/* Rework clear framework */
+
+.timeline {
+    padding-left: 0;
 }
