@@ -60,6 +60,7 @@
 <section class="in-building">
     <ul class="clr-timeline timeline">
         {{ range $pipeStep := .Pipeline.Spec.Steps }}
+            {{ if $pipeStep.Stage }}
             <li class="clr-timeline-step">
                 {{- if $pipeStep.Stage.CompletedTimestamp }}
                     <div class="clr-timeline-step-header">{{ $pipeStep.Stage.CompletedTimestamp.Format "15:04:05" }}</div>
@@ -81,6 +82,7 @@
                     <span class="clr-timeline-step-title">{{ $pipeStep.Stage.Name }}</span>
                 </div>
             </li>
+            {{ end }}
         {{ end }}
     </ul>
 </section>
