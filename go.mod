@@ -1,4 +1,4 @@
-module github.com/dailymotion/jx-pipelines-visualizer
+module github.com/jenkins-x/jx-pipelines-visualizer
 
 go 1.15
 

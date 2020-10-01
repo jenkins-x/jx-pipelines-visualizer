@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	visualizer "github.com/dailymotion/jx-pipelines-visualizer"
+	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"

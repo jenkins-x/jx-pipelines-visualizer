@@ -149,7 +149,6 @@ func bleveResultToPipelines(result *bleve.SearchResult) Pipelines {
 }
 
 func bleveDocToPipeline(doc *search.DocumentMatch) Pipeline {
-	//fmt.Printf("%#v\n", doc.Fields)
 	var (
 		startDate, endDate time.Time
 	)

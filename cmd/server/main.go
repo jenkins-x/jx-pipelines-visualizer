@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	visualizer "github.com/dailymotion/jx-pipelines-visualizer"
-	"github.com/dailymotion/jx-pipelines-visualizer/internal/kube"
-	"github.com/dailymotion/jx-pipelines-visualizer/web/handlers"
+	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
+	"github.com/jenkins-x/jx-pipelines-visualizer/internal/kube"
+	"github.com/jenkins-x/jx-pipelines-visualizer/web/handlers"
 
 	jxclientset "github.com/jenkins-x/jx-api/pkg/client/clientset/versioned"
 	"github.com/sirupsen/logrus"

@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	visualizer "github.com/dailymotion/jx-pipelines-visualizer"
+	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/render"

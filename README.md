@@ -34,68 +34,7 @@ Note that it is being used on GKE with logs stored in a GCS bucket.
 
 ## Installation
 
-### With Jenkins X v2
-
-In the Git repository for your dev environment:
-
-- Update the `env/requirements.yaml` file with the following:
-  ```
-  - name: jx-pipelines-visualizer
-    repository: https://dailymotion.github.io/jx-pipelines-visualizer/charts/
-    version: 0.0.3
-  ```
-- Create a new file `env/jx-pipelines-visualizer/values.tmpl.yaml` with the following content:
-  ```
-  {{- if .Requirements.storage.logs.enabled }}
-  config:
-    archivedLogsURLTemplate: >-
-      {{ .Requirements.storage.logs.url }}{{`/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch "pr"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log`}}
-  {{- end }}
-
-  ingress:
-    enabled: true
-    hosts:
-      - pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}
-    {{- if .Requirements.ingress.tls.enabled }}
-    tls:
-      enabled: true
-      secrets:
-        # re-use the existing tls secret managed by jx
-        {{- if .Requirements.ingress.tls.production }}
-        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-p: {}
-        {{- else }}
-        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-s: {}
-        {{- end }}
-    {{- end }}
-    annotations:
-      kubernetes.io/ingress.class: nginx
-  ```
-- If you want [Lighthouse](https://github.com/jenkins-x/lighthouse) to add links to your jx-pipelines-visualizer instance from your Pull/Merge Request checks, update the `env/lighthouse-jx/values.tmpl.yaml` file and add the following:
-  ```
-  env:
-    LIGHTHOUSE_REPORT_URL_BASE: "https://pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}"
-  ```
-
-This will expose the UI at `pipelines.your.domain.tld` - without any auth. You can add [basic auth with a few annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - re-using the Jenkins X Auth Secret:
-```
-nginx.ingress.kubernetes.io/auth-type: basic
-nginx.ingress.kubernetes.io/auth-secret: jx-basic-auth
-```
-
-### With Helm v3
-
-```
-$ helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
-$ helm install jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-Visualizer
-```
-
-### With Helm v2
-
-```
-$ helm repo add jx-pipelines-visualizer https://dailymotion.github.io/jx-pipelines-visualizer/charts/
-$ helm repo update
-$ helm install --name jx-pipelines-visualizer jx-pipelines-visualizer/jx-pipelines-visualizer
-```
+Coming soon...
 
 ## Configuration
 
@@ -114,3 +53,7 @@ go run cmd/server/main.go
 It uses the "informer" Kubernetes pattern to keep a local cache of the Jenkins X PipelineActivities, and index them in an in-memory [Bleve](http://blevesearch.com/) index.
 
 It uses part of jx code to retrieve the build logs - mainly the part to stream the build logs from the running pods. It is the same code used by the `jx get build logs` command.
+
+## Credits
+
+Thanks to [Dailymotion](https://www.dailymotion.com/) for creating the [original repository](https://github.com/dailymotion/jx-pipelines-visualizer) and then donate it to the Jenkins X project.

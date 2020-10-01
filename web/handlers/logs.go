@@ -55,7 +55,10 @@ func (h *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reader, err := buckets.ReadURL(buildLogsURL, 30*time.Second, nil)
+	httpFn := func(urlString string) (string, func(*http.Request), error) {
+		return urlString, func(*http.Request) {}, nil
+	}
+	reader, err := buckets.ReadURL(buildLogsURL, 30*time.Second, httpFn)
 	if err != nil {
 		if strings.Contains(err.Error(), "object doesn't exist") {
 			http.NotFound(w, r)

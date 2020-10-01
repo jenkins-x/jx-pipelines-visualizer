@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"text/template"
 
-	visualizer "github.com/dailymotion/jx-pipelines-visualizer"
-	"github.com/dailymotion/jx-pipelines-visualizer/web/handlers/functions"
+	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
+	"github.com/jenkins-x/jx-pipelines-visualizer/web/handlers/functions"
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/gorilla/mux"

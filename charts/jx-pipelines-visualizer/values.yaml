@@ -11,7 +11,7 @@ config:
   logLevel: INFO
 
 image:
-  repository: ghcr.io/dailymotion/jx-pipelines-visualizer
+  repository: FIXME
   # If no tag, fallback to the Chart's AppVersion
   tag:
   pullPolicy:
