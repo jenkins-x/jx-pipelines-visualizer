@@ -57,6 +57,12 @@ ingress:
   #- pipelines.example.com
   hosts: []
 
+
+  # enables basic auth secret to be created
+  basicAuth:
+    enabled: false
+    authData: ""
+
   tls:
     enabled: false
 

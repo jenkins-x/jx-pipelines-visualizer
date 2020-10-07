@@ -35,6 +35,17 @@ spec:
   {{- end }}
   {{- end }}
 
+{{- if .Values.ingress.basicAuth.enabled -}}
+---
+apiVersion: v1
+data:
+  auth: {{ .Values.ingress.basicAuth.authData | quote }}
+kind: Secret
+metadata:
+  name: jx-pipelines-visualizer-basic-auth
+type: Opaque
+{{- end -}}
+
 {{- if .Values.ingress.tls.enabled -}}
 {{- range $name, $secret := .Values.ingress.tls.secrets -}}
 {{- if and $secret.b64encodedCertificate $secret.b64encodedCertificateKey }}
