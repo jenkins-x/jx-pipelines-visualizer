@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-COPY ./web /app/
+COPY ./web /app/web
 COPY ./build/linux/jx-pipelines-visualizer /app/
 
 WORKDIR /app
