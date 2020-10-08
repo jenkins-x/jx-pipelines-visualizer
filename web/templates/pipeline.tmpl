@@ -40,7 +40,14 @@
 {{ end }}
 
 {{ define "header-pipeline" }}
-<h1 class="header-title">Pipeline {{ .Pipeline.Name }} <span class="status-{{ .Pipeline.Spec.Status }}">{{ .Pipeline.Spec.Status }}</span></h1>
+<h1 class="header-title">
+  <a href="/">Pipelines</a> &gt;
+  <a href="/{{ .Pipeline.Spec.GitOwner }}">{{ .Pipeline.Spec.GitOwner }}</a> &gt;
+  <a href="/{{ .Pipeline.Spec.GitOwner }}/{{ .Pipeline.Spec.GitRepository }}">{{ .Pipeline.Spec.GitRepository }}</a> &gt;
+  <a href="/{{ .Pipeline.Spec.GitOwner }}/{{ .Pipeline.Spec.GitRepository }}/{{ .Pipeline.Spec.GitBranch }}">{{ .Pipeline.Spec.GitBranch }}</a>
+  {{ .Pipeline.Spec.Context }} #{{ .Pipeline.Spec.Build }}
+  <span class="status-{{ .Pipeline.Spec.Status }}">{{ .Pipeline.Spec.Status }}</span>
+</h1>
 <div class="pipeline-metadata">
     <span>
         <a href="{{ .Pipeline.Spec.AuthorURL }}">
