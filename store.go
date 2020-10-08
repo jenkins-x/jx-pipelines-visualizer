@@ -62,6 +62,14 @@ type Pipelines struct {
 	}
 }
 
+// RecentPipelines returns the recent pipelines for the header
+func (p *Pipelines) RecentPipelines() []Pipeline {
+	if len(p.Pipelines) <= 3 {
+		return p.Pipelines
+	}
+	return p.Pipelines[0:3]
+}
+
 func (s *Store) All() (*Pipelines, error) {
 	request := bleve.NewSearchRequest(bleve.NewMatchAllQuery())
 	request.SortBy([]string{"-Start"})
