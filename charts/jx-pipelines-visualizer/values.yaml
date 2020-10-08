@@ -11,7 +11,7 @@ config:
   logLevel: INFO
 
 image:
-  repository: FIXME
+  repository: gcr.io/jenkinsxio/jx-pipelines-visualizer
   # If no tag, fallback to the Chart's AppVersion
   tag:
   pullPolicy:

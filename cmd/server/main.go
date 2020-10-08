@@ -28,9 +28,9 @@ var (
 	}
 
 	// these are set at compile time by GoReleaser through LD Flags
-	version = "dev"
-	commit  = "unknown"
-	date    = "now"
+	version  = "dev"
+	revision = "unknown"
+	date     = "now"
 )
 
 func init() {
@@ -47,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	if options.printVersion {
-		fmt.Printf("Version %s - Commit %s - Date %s", version, commit, date)
+		fmt.Printf("Version %s - Revision %s - Date %s", version, revision, date)
 		return
 	}
 
