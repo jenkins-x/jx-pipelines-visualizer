@@ -12,7 +12,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jenkins-x/jx-api/v3 v3.0.0
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.0
-	github.com/jenkins-x/jx-pipeline v0.0.38
+	github.com/jenkins-x/jx-pipeline v0.0.40
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
