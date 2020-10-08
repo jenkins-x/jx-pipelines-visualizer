@@ -77,6 +77,14 @@ func (r Router) Handler() (http.Handler, error) {
 
 	router.Handle("/healthz", healthzHandler())
 
+	router.Handle("/namespaces/{namespace:[a-zA-Z0-9_-]+}/pipelineruns/{pipelineRun:[a-zA-Z0-9_-]+}", &PipelineRunHandler{
+		TektonClient: tknClient,
+		PAInterface:  r.PAInterface,
+		Store:        r.Store,
+		Render:       r.render,
+		Logger:       r.Logger,
+	})
+
 	router.Handle("/{owner:[a-zA-Z0-9_-]+}", &OwnerHandler{
 		Store:  r.Store,
 		Render: r.render,
