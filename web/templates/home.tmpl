@@ -17,7 +17,7 @@
         
 <section class="in-building">
     <div class="pipeline-cards">
-        {{ range slice .Pipelines.Pipelines 0 3 }}
+        {{ range slice .Pipelines.RecentPipelines }}
             <div class="pipeline-card">
                 <span class="repository"><a class="repository-link" href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a></span>
                 <span class="pipeline">{{ .Context }}</span>
