@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,8 +10,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	jxclientv1 "github.com/jenkins-x/jx-api/pkg/client/clientset/versioned/typed/jenkins.io/v1"
-	"github.com/jenkins-x/jx/v2/pkg/cloud/buckets"
+	jxclientv1 "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,8 +35,9 @@ func (h *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.ToLower(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
+	ctx := context.Background()
 	var buildLogsURL string
-	pa, err := h.PAInterface.Get(name, metav1.GetOptions{})
+	pa, err := h.PAInterface.Get(ctx, name, metav1.GetOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -58,7 +60,7 @@ func (h *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	httpFn := func(urlString string) (string, func(*http.Request), error) {
 		return urlString, func(*http.Request) {}, nil
 	}
-	reader, err := buckets.ReadURL(buildLogsURL, 30*time.Second, httpFn)
+	reader, err := buckets.ReadURL(ctx, buildLogsURL, 30*time.Second, httpFn)
 	if err != nil {
 		if strings.Contains(err.Error(), "object doesn't exist") {
 			http.NotFound(w, r)

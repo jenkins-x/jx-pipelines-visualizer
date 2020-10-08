@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	jxclient "github.com/jenkins-x/jx-api/pkg/client/clientset/versioned"
-	"github.com/jenkins-x/jx/v2/pkg/logs"
+	jxclient "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
+	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 	sse "github.com/subchord/go-sse"
@@ -39,7 +39,8 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.ToLower(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
-	pa, err := h.JXClient.JenkinsV1().PipelineActivities(h.Namespace).Get(name, metav1.GetOptions{})
+	ctx := context.Background()
+	pa, err := h.JXClient.JenkinsV1().PipelineActivities(h.Namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			http.NotFound(w, r)
@@ -55,13 +56,32 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger := &logs.TektonLogger{
+	logger := &tektonlog.TektonLogger{
 		KubeClient:   h.KubeClient,
 		JXClient:     h.JXClient,
 		TektonClient: h.TektonClient,
 		Namespace:    h.Namespace,
 	}
-	for logLine := range logger.GetRunningBuildLogs(pa, "", false) {
+	context := vars["context"]
+	if context == "" {
+		context = pa.Spec.Context
+	}
+	buildFilter := &tektonlog.BuildPodInfoFilter{
+		Owner:      owner,
+		Repository: repo,
+		Branch:     branch,
+		Build:      build,
+		Context:    context,
+	}
+	_, _, prMap, err := logger.GetTektonPipelinesWithActivePipelineActivity(buildFilter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	key := strings.ToLower(fmt.Sprintf("%s/%s/%s #%s %s", owner, repo, branch, build, context))
+	prList := prMap[key]
+	for logLine := range logger.GetRunningBuildLogs(pa, prList, name) {
 		h.send(r.Context(), clientConnection, "log", logLine.Line)
 	}
 
