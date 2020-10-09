@@ -51,7 +51,7 @@
 <div class="pipeline-metadata">
     <span>
         <a href="{{ .Pipeline.Spec.AuthorURL }}">
-            <img src="{{ .Pipeline.Spec.AuthorAvatarURL }}" title="{{ .Pipeline.Spec.AuthorURL }}" class="owner-img" />
+            <img src='{{ if not .Pipeline.Spec.AuthorAvatarURL }}{{ "/static/avatar.png" }}{{ else }}{{ .Pipeline.Spec.AuthorAvatarURL }}{{ end }}' title="{{ .Pipeline.Spec.AuthorURL }}" class="owner-img" />
         </a>
     </span>
     <span>
