@@ -49,7 +49,7 @@
             {{ range .Pipelines.Pipelines }}
             <tr>
                 <td><a href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a></td>
-                <td data-order="{{ .Branch }}"><img src="{{ .AuthorAvatarURL }}" title="{{ .Author }}" width="20px"> <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a></td>
+                <td data-order="{{ .Branch }}"><img src='{{ if not .AuthorAvatarURL }}{{ "/static/avatar.png" }}{{ else }}{{ .AuthorAvatarURL }}{{ end }}' title="{{ .Author }}" width="20px"> <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a></td>
                 <td><a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a></td>
                 <td>{{ .Context }}</td>
                 <td class="status-{{ lower .Status }}">{{ .Status }}</td>
