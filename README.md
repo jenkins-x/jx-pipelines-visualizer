@@ -29,12 +29,78 @@ Note that it is being used on GKE with logs stored in a GCS bucket.
 - Auth - use a reverse-proxy in front or anything else to handle it
   - for example [Vouch and Okta](https://medium.com/@vbehar/how-to-protect-a-kubernetes-ingress-behind-okta-with-nginx-91e279e06009)
   - or [dex](https://github.com/dexidp/dex), [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy), ...
+  - or [nginx basic-auth](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - if you are using the nginx ingress controller
 - Create/Update/Delete operations. It is meant to be a read-only web UI
 - Anything in JX which is not related to the pipelines
 
 ## Installation
 
-Coming soon...
+### With Jenkins X v3
+
+It's already installed by default with Jenkins X v3 - you can see the default values here: <https://github.com/jenkins-x/jxr-versions/tree/master/charts/jx3/jx-pipelines-visualizer>
+
+### With Jenkins X v2
+
+In the Git repository for your dev environment:
+
+- Update the `env/requirements.yaml` file with the following:
+  ```
+  - name: jx-pipelines-visualizer
+    repository: https://storage.googleapis.com/jenkinsxio/charts/
+    version: 0.0.30
+  ```
+- Create a new file `env/jx-pipelines-visualizer/values.tmpl.yaml` with the following content:
+  ```
+  {{- if .Requirements.storage.logs.enabled }}
+  config:
+    archivedLogsURLTemplate: >-
+      {{ .Requirements.storage.logs.url }}{{`/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch "pr"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log`}}
+  {{- end }}
+
+  ingress:
+    enabled: true
+    hosts:
+      - pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}
+    {{- if .Requirements.ingress.tls.enabled }}
+    tls:
+      enabled: true
+      secrets:
+        # re-use the existing tls secret managed by jx
+        {{- if .Requirements.ingress.tls.production }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-p: {}
+        {{- else }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-s: {}
+        {{- end }}
+    {{- end }}
+    annotations:
+      kubernetes.io/ingress.class: nginx
+  ```
+- If you want [Lighthouse](https://github.com/jenkins-x/lighthouse) to add links to your jx-pipelines-visualizer instance from your Pull/Merge Request checks, update the `env/lighthouse-jx/values.tmpl.yaml` file and add the following:
+  ```
+  env:
+    LIGHTHOUSE_REPORT_URL_BASE: "https://pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}"
+  ```
+
+This will expose the UI at `pipelines.your.domain.tld` - without any auth. You can add [basic auth with a few annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - re-using the Jenkins X Auth Secret:
+```
+nginx.ingress.kubernetes.io/auth-type: basic
+nginx.ingress.kubernetes.io/auth-secret: jx-basic-auth
+```
+
+### With Helm v3
+
+```
+$ helm repo add jx https://storage.googleapis.com/jenkinsxio/charts/
+$ helm install jx-pipelines-visualizer jx/jx-pipelines-Visualizer
+```
+
+### With Helm v2
+
+```
+$ helm repo add jx https://storage.googleapis.com/jenkinsxio/charts/
+$ helm repo update
+$ helm install --name jx-pipelines-visualizer jx/jx-pipelines-visualizer
+```
 
 ## Configuration
 
