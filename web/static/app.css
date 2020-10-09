@@ -1,3 +1,9 @@
+#errors {
+    color: red;
+    background-color:black;
+    overflow-x: scroll;
+}
+
 .menu-bar {
     background-color: #040749;
     width: 50px;

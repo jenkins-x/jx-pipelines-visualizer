@@ -23,17 +23,27 @@
                 req.send();
             {{ else }}
                 const eventSource = new EventSource("/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs/live");
+                let logsBuffer = "";
                 
                 eventSource.addEventListener("log", function(e) {
-                    logs.innerHTML += ansi_up.ansi_to_html(e.data + "\n");
-                    logs.scrollTop = logs.scrollHeight;
-                })
+                    logsBuffer += e.data + "\n";
+                }, {passive: true})
                 eventSource.addEventListener("error", function(e) {
                     errors.innerHTML = e.data;
                 })
                 eventSource.addEventListener("EOF", function(e) {
                     eventSource.close();
                 })
+
+                function repeatOften() {
+                    if(logsBuffer) {
+                        logs.insertAdjacentHTML('beforeend', ansi_up.ansi_to_html(logsBuffer));
+                        logsBuffer = "";
+                    }
+                    requestAnimationFrame(repeatOften);
+                }
+                // Waiting the next animation frame to add DOM element
+                requestAnimationFrame(repeatOften);         
             {{ end }}
         };
     </script>
@@ -94,6 +104,6 @@
     </ul>
 </section>
 <section class="pipelines">
-    <div id="errors"></div>
+    <pre id="errors"></pre>
     <pre id="logs"></pre>
 </section>
