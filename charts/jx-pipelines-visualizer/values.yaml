@@ -13,7 +13,7 @@ config:
 image:
   repository: gcr.io/jenkinsxio/jx-pipelines-visualizer
   # If no tag, fallback to the Chart's AppVersion
-  tag: 0.0.33
+  tag: 0.0.34
   pullPolicy:
 
 deployment:
