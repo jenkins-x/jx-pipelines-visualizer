@@ -73,6 +73,11 @@ ingress:
     #  existing-secret-name: {}
     secrets: {}
 
+serviceAccount:
+  # allow additional annotations to be added to the ServiceAccount
+  # such as for workload identity on clouds
+  annotations: {}
+
 role:
   rules:
   - apiGroups:
