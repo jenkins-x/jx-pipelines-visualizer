@@ -31,6 +31,10 @@ spec:
   - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
   {{- else }}
   - secretName: {{ $name }}
+    hosts:
+{{- range $.Values.ingress.hosts }}
+    - {{ . }}
+{{- end }}
   {{- end }}
   {{- end }}
   {{- end }}
