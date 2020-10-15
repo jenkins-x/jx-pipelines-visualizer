@@ -37,7 +37,16 @@ Note that it is being used on GKE with logs stored in a GCS bucket.
 
 ### With Jenkins X v3
 
-It's already installed by default with Jenkins X v3 - you can see the default values here: <https://github.com/jenkins-x/jxr-versions/tree/master/charts/jx3/jx-pipelines-visualizer>
+It's already installed by default with Jenkins X v3. If its not (e.g. you have an older git repository) - add the following to your `helmfile.yaml` file in the `releases:` section:
+
+```yaml
+releases:
+- chart: jx3/jx-pipelines-visualizer
+```
+
+By default an ingress is created to access the UI using basic authentication. See the [documentation for how to access it](https://jenkins-x.io/docs/v3/guides/ui/#pipeline-visualizer)
+
+You can see the default values here: <https://github.com/jenkins-x/jxr-versions/tree/master/charts/jx3/jx-pipelines-visualizer>
 
 ### With Jenkins X v2
 
