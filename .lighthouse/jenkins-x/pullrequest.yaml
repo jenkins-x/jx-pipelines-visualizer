@@ -246,7 +246,7 @@ spec:
         - args:
           - source .jx/variables.sh && cp /tekton/creds-secrets/tekton-container-registry-auth/.dockerconfigjson
             /kaniko/.docker/config.json && /kaniko/executor $KANIKO_FLAGS --cache=true
-            --cache-dir=/workspace --context=/workspace/source --dockerfile=/workspace/source/Dockerfile
+            --cache-dir=/workspace --context=/workspace/source --dockerfile=/workspace/source/${DOCKERFILE_PATH:-Dockerfile}
             --destination=$DOCKER_REGISTRY/$DOCKER_REGISTRY_ORG/$REPO_NAME:$VERSION
             --cache-repo=$DOCKER_REGISTRY/$DOCKER_REGISTRY_ORG/cache
           command:

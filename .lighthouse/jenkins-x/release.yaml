@@ -276,16 +276,18 @@ spec:
           name: build-and-push-image
           resources: {}
         - args:
-          - cd /workspace/source/charts/$REPO_NAME && helm-docs
+          - 'if [ -d "/workspace/source/charts/$REPO_NAME" ]; then cd /workspace/source/charts/$REPO_NAME
+            && helm-docs; else echo no charts; fi'
           command:
-          - /bin/sh
+          - /bin/ash
           - -c
           image: jnorwood/helm-docs:latest
           name: chart-docs
           resources: {}
         - args:
-          - source .jx/variables.sh && cd /workspace/source/charts/$REPO_NAME && make
-            release
+          - 'if [ -d "/workspace/source/charts/$REPO_NAME" ]; then source .jx/variables.sh
+            && cd /workspace/source/charts/$REPO_NAME && make release; else echo no
+            charts; fi'
           command:
           - /bin/bash
           - -c
