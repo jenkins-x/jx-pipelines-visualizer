@@ -1,18 +1,34 @@
-#errors {
-    color: red;
-    background-color:black;
-    overflow-x: scroll;
+:root {
+    --color-background: #ffffff;
+    --color-background-darker: #f3f6fa;
+    --color-error: #ef476f;
+    --color-line-number: #1b1f234d;
+    --color-line-number-color-hover: #1b1f2399;
+    --color-line-selected: #6874f970;
+    --color-pending: #073b4c;
+    --color-running: #118ab2;
+    --color-success: #06d6a0;
+    --color-text-primary: #24292e;
+    --color-warning: #ffd166;
+
+    --main-color: #6873f9;
+    --main-color-darker: #040749;
+}
+
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue';
 }
 
 .menu-bar {
-    background-color: #040749;
+    background-color: var(--main-color-darker);
     width: 50px;
     height: 100%;
     position: fixed;
 }
 
 .top-header {
-    background-color: #ffffff;
+    background-color: var(--color-background);
     font-family: 'Helvetica Neue';
     height: 75px;
     display: flex;
@@ -38,7 +54,7 @@
 }
 
 .main-container {
-    background-color: #f3f6fa;
+    background-color: var(--color-background-darker);
     padding-left: 50px;
     height: 100%;
 }
@@ -56,7 +72,7 @@
 }
 
 .pipeline-card {
-    background-color: #6873f9;
+    background-color: var(--main-color);
     width: 300px;
     display: flex;
     flex-direction: column;
@@ -66,13 +82,13 @@
 }
 
 .pipeline-card:odd {
-    background-color: #6873f9;
+    background-color: var(--main-color);
     color: #fff;
 }
 
 .pipeline-card:even {
     background-color: #ffffff;
-    color: #6873f9;
+    color: var(--main-color);
 }
 
 .repository {
@@ -90,11 +106,6 @@
     padding: 20px;
 }
 
-body {
-    margin: 0;
-    font-family: 'Helvetica Neue';
-}
-
 pre#logs {
     margin: 0;
     padding: 10px;
@@ -108,16 +119,16 @@ pre#logs {
 }
 
 .status-succeeded {
-    color: lightgreen;
+    color: var(--color-success);
 }
 .status-running {
-    color: lightblue;
+    color: var(--color-running);
 }
 .status-failed {
-    color: red;
+    color: var(--color-error);
 }
 .status-pending {
-    color: gray;
+    color: var(--color-pending);
 }
 
 .pipeline-metadata {
@@ -141,4 +152,16 @@ a.repository-link {
 
 .timeline {
     padding-left: 0;
+}
+
+.clr-timeline-step clr-icon[shape=success-standard] {
+    color: var(--color-success);
+}
+
+.clr-timeline-step clr-icon[shape=error-standard] {
+    color: var(--color-error);
+}
+
+.clr-timeline-step clr-icon[shape=dot-circle] {
+    color: var(--color-running);
 }

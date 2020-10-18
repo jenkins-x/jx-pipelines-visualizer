@@ -1,52 +1,17 @@
 {{ define "css-pipeline" }}
     <link rel="stylesheet" href="https://unpkg.com/@clr/icons/clr-icons.min.css">
+    <link rel="stylesheet" href="/static/pipeline/main.css">
 {{ end }}
 
 {{ define "js-pipeline" }}
-    <script src="https://unpkg.com/@webcomponents/custom-elements" defer></script>
-    <script src="https://unpkg.com/@clr/icons/clr-icons.min.js"></script>
-    <script src="/static/ansi_up.js" type="text/javascript"></script>
     <script type="text/javascript">
-        window.onload = () => {
-            const ansi_up = new AnsiUp;
-            const logs = document.getElementById("logs");
-            const errors = document.getElementById("errors");
-            {{ if .Pipeline.Spec.BuildLogsURL }}
-                const req = new XMLHttpRequest();
-                req.addEventListener("load", function(e) {
-                    logs.innerHTML = ansi_up.ansi_to_html(req.responseText);
-                });
-                req.addEventListener("error", function(e) {
-                    errors.innerHTML = ansi_up.ansi_to_html(req.statusText);
-                });
-                req.open("GET", "/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs");
-                req.send();
-            {{ else }}
-                const eventSource = new EventSource("/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs/live");
-                let logsBuffer = "";
-                
-                eventSource.addEventListener("log", function(e) {
-                    logsBuffer += e.data + "\n";
-                }, {passive: true})
-                eventSource.addEventListener("error", function(e) {
-                    errors.innerHTML = e.data;
-                })
-                eventSource.addEventListener("EOF", function(e) {
-                    eventSource.close();
-                })
-
-                function repeatOften() {
-                    if(logsBuffer) {
-                        logs.insertAdjacentHTML('beforeend', ansi_up.ansi_to_html(logsBuffer));
-                        logsBuffer = "";
-                    }
-                    requestAnimationFrame(repeatOften);
-                }
-                // Waiting the next animation frame to add DOM element
-                requestAnimationFrame(repeatOften);         
-            {{ end }}
-        };
+        BUILD_LOG_URL = "{{.Pipeline.Spec.BuildLogsURL}}";
+        LOGS_URL = "/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}";
     </script>
+    <script src="https://unpkg.com/@webcomponents/custom-elements" defer></script>
+    <script src="https://unpkg.com/@clr/icons/clr-icons.min.js" defer></script>
+    <script src="/static/ansi_up.js" type="text/javascript" defer></script>
+    <script src="/static/pipeline/index.js" type="text/javascript" defer></script>
 {{ end }}
 
 {{ define "header-pipeline" }}
@@ -73,6 +38,17 @@
     </span>
 </div>
 {{ end }}
+
+<div class="header-hidden">
+    <h1>
+        <a href="/">Pipelines</a>/
+        <a href="/{{ .Pipeline.Spec.GitOwner }}">{{ .Pipeline.Spec.GitOwner }}</a>/
+        <a href="/{{ .Pipeline.Spec.GitOwner }}/{{ .Pipeline.Spec.GitRepository }}">{{ .Pipeline.Spec.GitRepository }}</a>/
+        <a href="/{{ .Pipeline.Spec.GitOwner }}/{{ .Pipeline.Spec.GitRepository }}/{{ .Pipeline.Spec.GitBranch }}">{{ .Pipeline.Spec.GitBranch }}</a>
+        {{ .Pipeline.Spec.Context }} #{{ .Pipeline.Spec.Build }}
+        <span class="status-{{ .Pipeline.Spec.Status }}">{{ .Pipeline.Spec.Status }}</span>
+    </h1>
+</div>
 
 <section class="in-building">
     <ul class="clr-timeline timeline">
@@ -104,6 +80,24 @@
     </ul>
 </section>
 <section class="pipelines">
-    <pre id="errors"></pre>
-    <pre id="logs"></pre>
+    <div class="logs-options">
+        <div class="follow-options">
+            <input class="follow-logs" type="checkbox" name="follow" checked>
+            <label for="follow">Follow logs</label>
+        </div>
+    </div>
+    <table class="error-logs-table">
+        <colgroup>
+            <col width="40">
+            <col>
+        </colgroup>
+        <tbody id="errors"></tbody>
+    </table>
+    <table class="logs-table">
+        <colgroup>
+            <col width="40">
+            <col>
+        </colgroup>
+        <tbody id="logs"></tbody>
+    </table>
 </section>
