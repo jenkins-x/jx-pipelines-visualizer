@@ -1,10 +1,9 @@
 :root {
     --color-background: #ffffff;
     --color-background-darker: #f3f6fa;
+    --color-grey: #eaebec;
     --color-error: #ef476f;
-    --color-line-number: #1b1f234d;
-    --color-line-number-color-hover: #1b1f2399;
-    --color-line-selected: #6874f970;
+
     --color-pending: #073b4c;
     --color-running: #118ab2;
     --color-success: #06d6a0;
@@ -13,6 +12,10 @@
 
     --main-color: #6873f9;
     --main-color-darker: #040749;
+}
+
+* {
+	box-sizing: border-box;
 }
 
 body {

@@ -4,10 +4,29 @@
     const errors = document.getElementById("errors");
 
     const followLogsCheckbox = document.querySelector('.follow-logs');
+    const logsTable = document.querySelector('.logs-table');
     const stickyHeader = document.querySelector('.header-hidden');
-    const stickyOption = document.querySelector('.follow-options');
+    const stickyOption = document.querySelector('.follow-option');
 
     const cssLineSelected = 'selected-line';
+
+    const addColorThemeOption = () => {
+        const themeSwitch = document.querySelector("#theme-switch");
+        themeSwitch.addEventListener('click', (e) => {
+            if(e.target.checked) {
+                logsTable.classList.add('logs-dark-theme');
+                localStorage.setItem('logs-dark-theme', true);
+            } else {
+                logsTable.classList.remove('logs-dark-theme');
+                localStorage.removeItem('logs-dark-theme');
+            }
+        });
+
+        // Init 
+        if (localStorage.getItem('logs-dark-theme')) {
+            themeSwitch.click();
+        }
+    };
 
     const transformLogIntoHtml = (lineNumber, text, type='') =>
         `<tr id="logsL${lineNumber}">
@@ -118,6 +137,7 @@
     // Run
 
     addScrollEvent();
+    addColorThemeOption();
 
     if (BUILD_LOG_URL) {
         loadByBuildLogUrl();
