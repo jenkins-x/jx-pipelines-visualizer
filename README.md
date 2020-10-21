@@ -84,17 +84,19 @@ In the Git repository for your dev environment:
     annotations:
       kubernetes.io/ingress.class: nginx
   ```
+  
+  This will expose the UI at `pipelines.your.domain.tld` - without any auth. You can add [basic auth by appending a few additional annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - re-using the Jenkins X Auth Secret:
+
+  ```
+  nginx.ingress.kubernetes.io/auth-type: basic
+  nginx.ingress.kubernetes.io/auth-secret: jx-basic-auth
+  ```
+  
 - If you want [Lighthouse](https://github.com/jenkins-x/lighthouse) to add links to your jx-pipelines-visualizer instance from your Pull/Merge Request checks, update the `env/lighthouse-jx/values.tmpl.yaml` file and add the following:
   ```
   env:
     LIGHTHOUSE_REPORT_URL_BASE: "https://pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}"
   ```
-
-This will expose the UI at `pipelines.your.domain.tld` - without any auth. You can add [basic auth with a few annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - re-using the Jenkins X Auth Secret:
-```
-nginx.ingress.kubernetes.io/auth-type: basic
-nginx.ingress.kubernetes.io/auth-secret: jx-basic-auth
-```
 
 ### With Helm v3
 
