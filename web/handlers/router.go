@@ -77,45 +77,37 @@ func (r Router) Handler() (http.Handler, error) {
 
 	router.Handle("/healthz", healthzHandler())
 
-	router.Handle("/namespaces/{namespace:[a-zA-Z0-9_-]+}/pipelineruns/{pipelineRun:[a-zA-Z0-9_-]+}", &PipelineRunHandler{
-		TektonClient: tknClient,
-		PAInterface:  r.PAInterface,
-		Store:        r.Store,
-		Render:       r.render,
-		Logger:       r.Logger,
-	})
-
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}", &OwnerHandler{
+	router.Handle("/{owner}", &OwnerHandler{
 		Store:  r.Store,
 		Render: r.render,
 		Logger: r.Logger,
 	})
 
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}", &RepositoryHandler{
+	router.Handle("/{owner}/{repo}", &RepositoryHandler{
 		Store:  r.Store,
 		Render: r.render,
 		Logger: r.Logger,
 	})
 
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}/{branch:[a-zA-Z0-9_-]+}", &BranchHandler{
+	router.Handle("/{owner}/{repo}/{branch}", &BranchHandler{
 		Store:  r.Store,
 		Render: r.render,
 		Logger: r.Logger,
 	})
 
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}/{branch:[a-zA-Z0-9_-]+}/{build:[0-9]+}", &PipelineHandler{
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
 		PAInterface: r.PAInterface,
 		Render:      r.render,
 		Logger:      r.Logger,
 	})
 
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}/{branch:[a-zA-Z0-9_-]+}/{build:[0-9]+}/logs", &LogsHandler{
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
 		PAInterface:          r.PAInterface,
 		BuildLogsURLTemplate: archivedLogsURLTemplate,
 		Logger:               r.Logger,
 	})
 
-	router.Handle("/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}/{branch:[a-zA-Z0-9_-]+}/{build:[0-9]+}/logs/live", &LiveLogsHandler{
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs/live", &LiveLogsHandler{
 		KubeClient:   kClient,
 		JXClient:     jxClient,
 		TektonClient: tknClient,
@@ -124,7 +116,15 @@ func (r Router) Handler() (http.Handler, error) {
 		Logger:       r.Logger,
 	})
 
-	router.Handle("/teams/{team:[a-zA-Z0-9_-]+}/projects/{owner:[a-zA-Z0-9_-]+}/{repo:[a-zA-Z0-9_-]+}/{branch:[a-zA-Z0-9_-]+}/{build:[0-9]+}", jxuiCompatibilityHandler(r.Namespace))
+	router.Handle("/namespaces/{namespace}/pipelineruns/{pipelineRun}", &PipelineRunHandler{
+		TektonClient: tknClient,
+		PAInterface:  r.PAInterface,
+		Store:        r.Store,
+		Render:       r.render,
+		Logger:       r.Logger,
+	})
+
+	router.Handle("/teams/{team}/projects/{owner}/{repo}/{branch}/{build:[0-9]+}", jxuiCompatibilityHandler(r.Namespace))
 
 	handler := negroni.New(
 		negroni.NewRecovery(),
