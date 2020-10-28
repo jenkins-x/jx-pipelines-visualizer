@@ -11,8 +11,20 @@
 
 
 {{ define "header-home" }}
-    <h1 class="header-title">Jenkins X Pipelines</h1>
-    <!-- <input type="text" placeholder="Search Pipelines (not implemented)" /> -->
+<h1 class="header-title">
+    <a href="/">Pipelines</a>
+    {{ if (isAvailable . "Owner") }}
+        &gt; <a href="/{{ .Owner }}">{{ .Owner }}</a>
+        {{ if (isAvailable . "Repository") }}
+            &gt; <a href="/{{ .Owner }}/{{ .Repository }}">{{ .Repository }}</a>
+            {{ if (isAvailable . "Branch") }}
+                &gt; <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a>
+            {{ end }}
+        {{ end }}
+    {{ end }}
+  </h1>
+
+<!-- <input type="text" placeholder="Search Pipelines (not implemented)" /> -->
 {{ end}}
         
 <section class="in-building">

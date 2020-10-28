@@ -28,12 +28,12 @@ func (h *OwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Render.HTML(w, http.StatusOK, "owner", struct {
-		Owner        string
-		Repositories map[string]int
+	err = h.Render.HTML(w, http.StatusOK, "home", struct {
+		Owner     string
+		Pipelines *visualizer.Pipelines
 	}{
 		owner,
-		pipelines.Counts.Repositories,
+		pipelines,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

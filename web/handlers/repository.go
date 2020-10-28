@@ -30,14 +30,14 @@ func (h *RepositoryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Render.HTML(w, http.StatusOK, "repository", struct {
+	err = h.Render.HTML(w, http.StatusOK, "home", struct {
 		Owner      string
 		Repository string
-		Branches   map[string]int
+		Pipelines  *visualizer.Pipelines
 	}{
 		owner,
 		repository,
-		pipelines.Counts.Branches,
+		pipelines,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

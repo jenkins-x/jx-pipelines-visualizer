@@ -95,6 +95,7 @@ func (s *Store) Query(q Query) (*Pipelines, error) {
 	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 20))
 	request.AddFacet("Branch", bleve.NewFacetRequest("Branch", 20))
 	request.AddFacet("Build", bleve.NewFacetRequest("Build", 20))
+	request.Size = 10000
 	request.Fields = []string{"*"}
 	result, err := s.Index.Search(request)
 	if err != nil {
