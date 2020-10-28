@@ -42,6 +42,7 @@ func (r Router) Handler() (http.Handler, error) {
 			htmltemplate.FuncMap{
 				"pipelinePullRequestURL": functions.PipelinePullRequestURL,
 				"vdate":                  functions.VDate,
+				"isAvailable":            functions.IsAvailable,
 			},
 		},
 	})

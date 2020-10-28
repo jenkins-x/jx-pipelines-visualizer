@@ -36,16 +36,16 @@ func (h *BranchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Render.HTML(w, http.StatusOK, "branch", struct {
+	err = h.Render.HTML(w, http.StatusOK, "home", struct {
 		Owner      string
 		Repository string
 		Branch     string
-		Builds     map[string]int
+		Pipelines  *visualizer.Pipelines
 	}{
 		owner,
 		repository,
 		branch,
-		pipelines.Counts.Builds,
+		pipelines,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
