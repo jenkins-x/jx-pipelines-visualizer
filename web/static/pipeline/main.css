@@ -228,3 +228,13 @@
 .theme-switch__input:checked ~ .theme-switch__label span::after {
     transform: translate3d(25px, 0, 0);
 }
+
+@media (max-width: 600px) {
+    .pipeline-root-links {
+        display: none;
+    }
+
+    .sticky-header {
+        left: 0;
+    }
+}
