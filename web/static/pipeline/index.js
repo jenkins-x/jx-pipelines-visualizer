@@ -28,13 +28,19 @@
         }
     };
 
-    const transformLogIntoHtml = (lineNumber, text, type='') =>
-        `<tr id="logsL${lineNumber}">
+    const transformLogIntoHtml = (lineNumber, text, type='') => {
+        // Transform url to link element
+        const transformedText = text.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
+
+        return `
+        <tr id="logsL${lineNumber}">
             <td class="log-number" data-line-number=${lineNumber}></td>
             <td class="log-line">
-                <span class="line-text ${type}">${text}</span>
+                <span class="line-text ${type}">${transformedText}</span>
             </td>
-        </tr>`;
+        </tr>
+        `;
+    }
 
     const transformLogsIntoHtml = (logsString, type='', givenIndex) =>
         logsString
