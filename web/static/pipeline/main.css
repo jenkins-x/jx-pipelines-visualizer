@@ -53,7 +53,8 @@
     --color-line-selected: #6874f970;
 
     background-color: var(--color-bg-log);
-    padding-top: 20px
+    padding-top: 20px;
+    width: 100%;
 }
 
 .logs-dark-theme {
@@ -226,4 +227,14 @@
 
 .theme-switch__input:checked ~ .theme-switch__label span::after {
     transform: translate3d(25px, 0, 0);
+}
+
+@media (max-width: 600px) {
+    .pipeline-root-links {
+        display: none;
+    }
+
+    .sticky-header {
+        left: 0;
+    }
 }

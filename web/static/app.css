@@ -38,6 +38,7 @@ body {
     justify-content: space-between;
     padding-left: 10px;
     margin-bottom: 20px;
+    overflow-x: auto;
 }
 
 .top-header input {
@@ -155,6 +156,7 @@ a.repository-link {
 
 .timeline {
     padding-left: 0;
+    overflow-x: auto;
 }
 
 .clr-timeline-step clr-icon[shape=success-standard] {
@@ -167,4 +169,19 @@ a.repository-link {
 
 .clr-timeline-step clr-icon[shape=dot-circle] {
     color: var(--color-running);
+}
+
+
+@media (max-width: 600px) {
+    .pipeline-metadata {
+        display: none;
+    }
+
+    .menu-bar {
+        display: none;
+    }
+
+    .main-container {
+        padding-left: 0;
+    }
 }
