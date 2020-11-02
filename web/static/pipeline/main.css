@@ -53,7 +53,8 @@
     --color-line-selected: #6874f970;
 
     background-color: var(--color-bg-log);
-    padding-top: 20px
+    padding-top: 20px;
+    width: 100%;
 }
 
 .logs-dark-theme {

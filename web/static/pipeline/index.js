@@ -90,7 +90,6 @@
 
     const loadByBuildLogUrl = () => {
         fetch(`${LOGS_URL}/logs`).then(response => response.text()).then((response) => {
-            console.log(response);
             logs.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(response));
             addLinks();
             goToAnchor();
@@ -108,6 +107,10 @@
 
         const repeatOften = () => {
             if(logsBuffer) {
+                if(lineNumber === 0) {
+                    logs.innerHTML = "";
+                }
+
                 logs.insertAdjacentHTML('beforeend', transformLogsIntoHtml(ansi_up.ansi_to_html(logsBuffer), '', () => ++lineNumber));
                 addLinks();
                 if (!getAnchor) {
@@ -141,7 +144,6 @@
 
 
     // Run
-
     addScrollEvent();
     addColorThemeOption();
 
