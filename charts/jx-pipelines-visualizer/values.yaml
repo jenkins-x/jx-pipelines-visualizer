@@ -53,8 +53,8 @@ ingress:
   labels: {}
   annotations: {}
 
-  #hosts:
-  #- pipelines.example.com
+  # hosts:
+  # - pipelines.example.com
   hosts: []
 
 
@@ -66,14 +66,11 @@ ingress:
   tls:
     enabled: false
 
-    # if embedded is specified, a new secret will be created otherwise, it will use existing secret defined by name parameter
     # secrets:
-    # - name: existing-secret-name
-    #   hosts: 
-    #   - pipelines.example.com
     #   embedded:
     #     b64encodedCertificate: e30k
     #     b64encodedCertificateKey: e30k
+    #   existing-secret-name: {}  
     secrets: {}
 
 serviceAccount:

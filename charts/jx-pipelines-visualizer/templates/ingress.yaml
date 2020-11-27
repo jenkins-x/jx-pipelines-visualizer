@@ -26,14 +26,14 @@ spec:
 
   {{- if .Values.ingress.tls.enabled }}
   tls:
-  {{- range $secret := .Values.ingress.tls.secrets }}
-  {{- if and $secret.embedded }}
-  - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $secret.name }}
+  {{- range $name, $secret := .Values.ingress.tls.secrets }}
+  {{- if eq $name "embedded" }}
+  - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
   {{- else }}
-  - secretName: {{ $secret.name }}
+  - secretName: {{ $name }}
   {{- end }}
     hosts:
-{{- range $secret.hosts }}
+{{- range $.Values.ingress.hosts }}
     - {{ . }}
 {{- end }}
   {{- end }}
@@ -51,18 +51,18 @@ type: Opaque
 {{- end -}}
 
 {{- if .Values.ingress.tls.enabled -}}
-{{- range $secret := .Values.ingress.tls.secrets -}}
-{{- if $secret.embedded }}
+{{- range $name, $secret := .Values.ingress.tls.secrets -}}
+{{- if eq $name "embedded" }}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "jxpipelines.fullname" $ }}-tls-{{ $secret.name }}
+  name: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
   labels: {{- include "jxpipelines.labels" $ | nindent 4 }}
 type: kubernetes.io/tls
 data:
-  tls.crt: {{ $secret.embedded.b64encodedCertificate | quote }}
-  tls.key: {{ $secret.embedded.b64encodedCertificateKey | quote }}
+  tls.crt: {{ $secret.b64encodedCertificate | quote }}
+  tls.key: {{ $secret.b64encodedCertificateKey | quote }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
