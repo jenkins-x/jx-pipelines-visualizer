@@ -74,14 +74,12 @@ In the Git repository for your dev environment:
     tls:
       enabled: true
       secrets:
-      # re-use the existing tls secret managed by jx
-      {{- if .Requirements.ingress.tls.production }}
-      - name: tls-{{ .Requirements.ingress.domain | replace "." "-" }}-p
-      {{- else }}
-      - name: tls-{{ .Requirements.ingress.domain | replace "." "-" }}-s
-      {{- end }}
-        hosts: 
-        - pipelines{{.Requirements.ingress.namespaceSubDomain}}{{.Requirements.ingress.domain}}
+        # re-use the existing tls secret managed by jx
+        {{- if .Requirements.ingress.tls.production }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-p: {}
+        {{- else }}
+        tls-{{ .Requirements.ingress.domain | replace "." "-" }}-s: {}
+        {{- end }}
     {{- end }}
     annotations:
       kubernetes.io/ingress.class: nginx
