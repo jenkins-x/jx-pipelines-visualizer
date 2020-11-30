@@ -49,6 +49,13 @@ spec:
         - -log-level
         - {{ . }}
         {{- end }}
+        {{- if .Values.pod.env }}
+        env:
+        {{- range $pkey, $pval := .Values.pod.env }}
+        - name: {{ $pkey }}
+          value: {{ quote $pval }}
+        {{- end }}
+        {{- end }}
         ports:
         - name: http
           containerPort: 8080
@@ -62,6 +69,9 @@ spec:
         {{- with .Values.pod.resources }}
         resources: {{- toYaml . | trim | nindent 10 }}
         {{- end }}
+      {{- with .Values.pod.securityContext }}
+      securityContext: {{- toYaml . | trim | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "jxpipelines.fullname" . }}
       enableServiceLinks: {{ .Values.pod.enableServiceLinks }}
       {{- with .Values.pod.activeDeadlineSeconds }}

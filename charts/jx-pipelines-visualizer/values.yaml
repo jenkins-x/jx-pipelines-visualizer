@@ -40,6 +40,9 @@ pod:
   tolerations: []
   hostAliases: []
   schedulerName:
+  securityContext:
+    fsGroup: 1000
+  env: {}
 
 service:
   port: 80
