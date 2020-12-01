@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	jenkinsv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
-	jxclientset "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
-	informers "github.com/jenkins-x/jx-api/v3/pkg/client/informers/externalversions"
+	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
+	jxclientset "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
+	informers "github.com/jenkins-x/jx-api/v4/pkg/client/informers/externalversions"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
 )

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	jxclient "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
+	jxclient "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
@@ -62,26 +62,26 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		TektonClient: h.TektonClient,
 		Namespace:    h.Namespace,
 	}
-	context := vars["context"]
-	if context == "" {
-		context = pa.Spec.Context
+	logContext := vars["logContext"]
+	if logContext == "" {
+		logContext = pa.Spec.Context
 	}
 	buildFilter := &tektonlog.BuildPodInfoFilter{
 		Owner:      owner,
 		Repository: repo,
 		Branch:     branch,
 		Build:      build,
-		Context:    context,
+		Context:    logContext,
 	}
-	_, _, prMap, err := logger.GetTektonPipelinesWithActivePipelineActivity(buildFilter)
+	_, _, prMap, err := logger.GetTektonPipelinesWithActivePipelineActivity(context.TODO(), buildFilter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	key := strings.ToLower(fmt.Sprintf("%s/%s/%s #%s %s", owner, repo, branch, build, context))
+	key := strings.ToLower(fmt.Sprintf("%s/%s/%s #%s %s", owner, repo, branch, build, logContext))
 	prList := prMap[key]
-	for logLine := range logger.GetRunningBuildLogs(pa, prList, name) {
+	for logLine := range logger.GetRunningBuildLogs(context.TODO(), pa, prList, name) {
 		h.send(r.Context(), clientConnection, "log", logLine.Line)
 	}
 
