@@ -55,6 +55,7 @@ ingress:
 
   # hosts:
   # - pipelines.example.com
+  # - pipelines.foo.bar
   hosts: []
 
 
@@ -70,7 +71,11 @@ ingress:
     #   embedded:
     #     b64encodedCertificate: e30k
     #     b64encodedCertificateKey: e30k
-    #   existing-secret-name: {}  
+    #     hosts:
+    #     - pipelines.example.com
+    #   existing-secret-name: {}
+    #     hosts:
+    #     - pipelines.foo.bar 
     secrets: {}
 
 serviceAccount:

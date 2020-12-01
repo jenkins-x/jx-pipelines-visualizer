@@ -27,15 +27,21 @@ spec:
   {{- if .Values.ingress.tls.enabled }}
   tls:
   {{- range $name, $secret := .Values.ingress.tls.secrets }}
-  {{- if eq $name "embedded" }}
+  {{- if and $secret.b64encodedCertificate $secret.b64encodedCertificateKey }}
   - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
   {{- else }}
   - secretName: {{ $name }}
   {{- end }}
     hosts:
-{{- range $.Values.ingress.hosts }}
+    {{- if $secret.hosts }}
+    {{- range $secret.hosts }}
     - {{ . }}
-{{- end }}
+    {{- end }}
+    {{- else }}
+    {{- range $.Values.ingress.hosts }}
+    - {{ . }}
+    {{- end }}
+    {{- end }}
   {{- end }}
   {{- end }}
 
@@ -52,7 +58,7 @@ type: Opaque
 
 {{- if .Values.ingress.tls.enabled -}}
 {{- range $name, $secret := .Values.ingress.tls.secrets -}}
-{{- if eq $name "embedded" }}
+{{- if and $secret.b64encodedCertificate $secret.b64encodedCertificateKey }}
 ---
 apiVersion: v1
 kind: Secret
