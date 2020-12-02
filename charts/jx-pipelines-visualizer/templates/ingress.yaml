@@ -31,15 +31,21 @@ spec:
   - secretName: {{ include "jxpipelines.fullname" $ }}-tls-{{ $name }}
   {{- else }}
   - secretName: {{ $name }}
-    hosts:
-{{- range $.Values.ingress.hosts }}
-    - {{ . }}
-{{- end }}
   {{- end }}
+    hosts:
+    {{- if $secret.hosts }}
+    {{- range $secret.hosts }}
+    - {{ . }}
+    {{- end }}
+    {{- else }}
+    {{- range $.Values.ingress.hosts }}
+    - {{ . }}
+    {{- end }}
+    {{- end }}
   {{- end }}
   {{- end }}
 
-{{- if .Values.ingress.basicAuth.enabled -}}
+{{- if .Values.ingress.basicAuth.enabled }}
 ---
 apiVersion: v1
 data:
