@@ -74,6 +74,7 @@ ingress:
     #     hosts:
     #     - pipelines.example.com
     #   existing-secret-name: {}
+    #   existing-secret-name-with-custom-hosts:
     #     hosts:
     #     - pipelines.foo.bar 
     secrets: {}
