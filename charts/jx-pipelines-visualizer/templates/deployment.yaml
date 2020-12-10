@@ -51,6 +51,10 @@ spec:
         {{- end }}
         {{- if .Values.pod.env }}
         env:
+        - name: XDG_CONFIG_HOME
+          value: /home/jenkins
+        - name: GIT_SECRET_MOUNT_PATH
+          value: /secrets/git
         {{- range $pkey, $pval := .Values.pod.env }}
         - name: {{ $pkey }}
           value: {{ quote $pval }}
@@ -66,6 +70,9 @@ spec:
           httpGet:
             path: /healthz
             port: http
+        volumeMounts:
+        - mountPath: /secrets/git
+          name: secrets-git
         {{- with .Values.pod.resources }}
         resources: {{- toYaml . | trim | nindent 10 }}
         {{- end }}
@@ -95,3 +102,8 @@ spec:
       {{- with .Values.pod.schedulerName }}
       schedulerName: {{ tpl . $ | trim }}
       {{- end }}
+      volumes:
+      - name: secrets-git
+        secret:
+          defaultMode: 420
+          secretName: tekton-git
