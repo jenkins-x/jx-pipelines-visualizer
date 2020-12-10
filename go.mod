@@ -14,7 +14,7 @@ require (
 	github.com/googleapis/gnostic v0.4.2 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/jenkins-x/jx-api/v4 v4.0.11
-	github.com/jenkins-x/jx-helpers/v3 v3.0.29 // indirect
+	github.com/jenkins-x/jx-helpers/v3 v3.0.33 // indirect
 	github.com/jenkins-x/jx-pipeline v0.0.71
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
