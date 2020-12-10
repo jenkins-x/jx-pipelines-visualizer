@@ -13,10 +13,9 @@ require (
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/googleapis/gnostic v0.4.2 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/jenkins-x/go-scm v1.5.188 // indirect
-	github.com/jenkins-x/jx-api/v3 v3.0.1
-	github.com/jenkins-x/jx-helpers/v3 v3.0.8 // indirect
-	github.com/jenkins-x/jx-pipeline v0.0.56
+	github.com/jenkins-x/jx-api/v4 v4.0.11
+	github.com/jenkins-x/jx-helpers/v3 v3.0.29 // indirect
+	github.com/jenkins-x/jx-pipeline v0.0.71
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
@@ -32,7 +31,7 @@ require (
 	github.com/urfave/negroni/v2 v2.0.2
 	github.com/willf/bitset v1.1.11 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	k8s.io/apimachinery v0.19.2
+	k8s.io/apimachinery v0.19.3
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 )
 

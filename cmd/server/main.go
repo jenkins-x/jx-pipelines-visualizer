@@ -12,7 +12,7 @@ import (
 	"github.com/jenkins-x/jx-pipelines-visualizer/internal/kube"
 	"github.com/jenkins-x/jx-pipelines-visualizer/web/handlers"
 
-	jxclientset "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned"
+	jxclientset "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/sirupsen/logrus"
 )
 

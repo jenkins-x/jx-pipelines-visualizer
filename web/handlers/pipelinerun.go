@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	jenkinsv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
-	jxclientv1 "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
+	jxclientv1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
@@ -47,7 +47,7 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pa, err := tektonlog.GetPipelineActivityForPipelineRun(h.PAInterface, pr)
+	pa, err := tektonlog.GetPipelineActivityForPipelineRun(context.TODO(), h.PAInterface, pr)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			h.RenderNotFound(w)

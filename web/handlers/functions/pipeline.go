@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	jenkinsv1 "github.com/jenkins-x/jx-api/v3/pkg/apis/jenkins.io/v1"
+	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 )
 
 func PipelinePullRequestURL(pa *jenkinsv1.PipelineActivity) string {
