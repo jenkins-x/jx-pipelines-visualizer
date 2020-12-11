@@ -2,6 +2,7 @@
 
 fullnameOverride:
 nameOverride:
+gitSecretName: tekton-git
 
 config:
   # gs://BUCKET_NAME/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch \"pr\"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log
