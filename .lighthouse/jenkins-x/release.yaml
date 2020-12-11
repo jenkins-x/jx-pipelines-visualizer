@@ -23,8 +23,6 @@ spec:
             #!/usr/bin/env bash
             VERSION=$(jx-release-version)
             echo $VERSION > VERSION
-
-
         - image: gcr.io/jenkinsxio/jx-boot:3.1.28
           name: jx-variables
           resources: {}
