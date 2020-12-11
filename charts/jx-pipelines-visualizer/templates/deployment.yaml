@@ -70,9 +70,11 @@ spec:
           httpGet:
             path: /healthz
             port: http
+        {{- if .Values.gitSecretName }}
         volumeMounts:
         - mountPath: /secrets/git
           name: secrets-git
+        {{- end }}
         {{- with .Values.pod.resources }}
         resources: {{- toYaml . | trim | nindent 10 }}
         {{- end }}
@@ -102,8 +104,10 @@ spec:
       {{- with .Values.pod.schedulerName }}
       schedulerName: {{ tpl . $ | trim }}
       {{- end }}
+      {{- if .Values.gitSecretName }}
       volumes:
       - name: secrets-git
         secret:
           defaultMode: 420
-          secretName: tekton-git
+          secretName: {{ .Values.gitSecretName }}
+      {{- end }}
