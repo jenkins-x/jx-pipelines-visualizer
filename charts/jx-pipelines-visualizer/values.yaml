@@ -85,6 +85,7 @@ ingress:
 
 istio:
   enabled: false
+  apiVersion: networking.istio.io/v1beta1
   gateway: jx-gateway
 
 serviceAccount:
