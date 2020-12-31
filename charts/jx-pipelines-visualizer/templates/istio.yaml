@@ -1,0 +1,16 @@
+{{- if .Values.istio.enabled }}
+apiVersion: {{ .Values.istio.apiVersion }}
+kind: VirtualService
+metadata:
+  name: {{ include "jxpipelines.fullname" $ }}
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - dashboard{{ .Values.jxRequirements.ingress.namespaceSubDomain }}{{ .Values.jxRequirements.ingress.domain }}
+  http:
+  - route:
+    - destination:
+        host: {{ include "jxpipelines.fullname" $ }}
+      weight: 100
+{{- end }}
