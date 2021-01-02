@@ -83,6 +83,11 @@ ingress:
     #     - pipelines.foo.bar 
     secrets: {}
 
+istio:
+  enabled: false
+  apiVersion: networking.istio.io/v1beta1
+  gateway: jx-gateway
+
 serviceAccount:
   # allow additional annotations to be added to the ServiceAccount
   # such as for workload identity on clouds
