@@ -1,5 +1,5 @@
 {{ define "css-pipeline" }}
-    <link rel="stylesheet" href="https://unpkg.com/@clr/icons/clr-icons.min.css">
+    <link rel="stylesheet" href="/static/lib/clr-icons.min.css">
     <link rel="stylesheet" href="/static/pipeline/main.css">
 {{ end }}
 
@@ -8,9 +8,9 @@
         BUILD_LOG_URL = "{{.Pipeline.Spec.BuildLogsURL}}";
         LOGS_URL = "/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}";
     </script>
-    <script src="https://unpkg.com/@webcomponents/custom-elements" defer></script>
-    <script src="https://unpkg.com/@clr/icons/clr-icons.min.js" defer></script>
-    <script src="/static/ansi_up.js" type="text/javascript" defer></script>
+    <script src="/static/lib/custom-elements.min.js" defer></script>
+    <script src="/static/lib/clr-icons.min.js" defer></script>
+    <script src="/static/lib/ansi_up.js" type="text/javascript" defer></script>
     <script src="/static/pipeline/index.js" type="text/javascript" defer></script>
 {{ end }}
 
@@ -94,6 +94,10 @@
         <div class="follow-option">
             <input class="follow-logs" type="checkbox" name="follow" checked>
             <label for="follow">Follow logs</label>
+        </div>
+        <div class="raw-logs-options">
+            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
+            <a class="option-button" id="downloadLogs" download="{{.Pipeline.Spec.GitOwner}}-{{.Pipeline.Spec.GitRepository}}-{{.Pipeline.Spec.GitBranch}}-{{.Pipeline.Spec.Build}}.txt">Download raw logs</a>
         </div>
     </div>
     <table class="error-logs-table">
