@@ -2,6 +2,7 @@
     const ansi_up = new AnsiUp;
     const logs = document.getElementById("logs");
     const errors = document.getElementById("errors");
+    const downloadLink = document.getElementById("downloadLogs");
 
     const followLogsCheckbox = document.querySelector('.follow-logs');
     const logsTable = document.querySelector('.logs-table');
@@ -88,11 +89,19 @@
         });
     }
 
+    const generateDownloadLink = (logs) => {
+        var blob = new Blob([logs], { type : "text/plain;charset=utf-8"});
+        downloadUrl = URL.createObjectURL(blob);
+
+        downloadLink.setAttribute("href", downloadUrl);
+    }
+
     const loadByBuildLogUrl = () => {
         fetch(`${LOGS_URL}/logs`).then(response => response.text()).then((response) => {
             logs.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(response));
             addLinks();
             goToAnchor();
+            generateDownloadLink(response);
         }).catch((error)=> {
             errors.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(error), 'line-error');
         });
@@ -104,6 +113,8 @@
         let logsBuffer = "";
         let getAnchor = false;
         let isFinished = false;
+        
+        downloadLink.remove();
 
         const repeatOften = () => {
             if(logsBuffer) {
