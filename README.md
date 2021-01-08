@@ -66,6 +66,8 @@ In the Git repository for your dev environment:
       {{ .Requirements.storage.logs.url }}{{`/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch "pr"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log`}}
   {{- end }}
 
+  gitSecretName: ""
+
   ingress:
     enabled: true
     hosts:
