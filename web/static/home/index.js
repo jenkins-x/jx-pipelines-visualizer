@@ -3,7 +3,7 @@ $(document).ready(() => {
         return this.api().column( col, {order:'index'} ).nodes().map(td => $(td).data('order'));
     };
 
-    $('#dataTable').DataTable({
+    var table = $('#dataTable').DataTable({
         lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
         pageLength: 25,
         order: [[5, 'desc']],
@@ -15,4 +15,10 @@ $(document).ready(() => {
             { targets: 'author', visible: false }
         ]
     });
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var q = urlParams.get('q');
+    if (q) {
+        table.search(q).draw();
+    }
 });

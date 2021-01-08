@@ -27,21 +27,18 @@
   </h1>
 
 <!-- <input type="text" placeholder="Search Pipelines (not implemented)" /> -->
-{{ end}}
-        
+{{ end }}
+
 <section class="in-building">
     <div class="pipeline-cards">
-        {{ range slice .Pipelines.RecentPipelines }}
-            <div class="pipeline-card">
-                <span class="repository"><a class="repository-link" href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a></span>
-                <span class="pipeline">{{ .Context }}</span>
-                {{ if .Duration }}
-                <span class="time">during {{ with .Duration }}{{ . }}{{ end }}</span>
-                {{ else }}
-                <span class="time">start at {{ .Start.Format "15:04:05" }} </span>
-                {{ end }}
-            </div>
-        {{ end }}
+        {{- range list "Pending" "Running" "Failed" "Succeeded" -}}
+        {{- $pipelines := index $.Pipelines.Counts.Statuses . -}}
+        {{- if gt $pipelines 0 -}}
+        <div class="pipeline-card pipeline-card-{{ lower . }}">
+            <span><a href="/?q={{ . }}">{{ $pipelines }} {{ . }}</a></span>
+        </div>
+        {{- end -}}
+        {{- end -}}
     </div>
 </section>
 <section class="dataTable-container">

@@ -85,19 +85,29 @@ body {
     color: #fff;
 }
 
-.pipeline-card:odd {
-    background-color: var(--main-color);
-    color: #fff;
-}
-
-.pipeline-card:even {
-    background-color: #ffffff;
-    color: var(--main-color);
-}
-
-.repository {
+.pipeline-card span {
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+.pipeline-card a {
+    color: #fff
+}
+
+.pipeline-card-pending {
+    background-color: var(--color-pending);
+}
+
+.pipeline-card-running {
+    background-color: var(--color-running);
+}
+
+.pipeline-card-failed {
+    background-color: var(--color-error);
+}
+
+.pipeline-card-succeeded {
+    background-color: var(--color-success);
 }
 
 .pipeline {
@@ -146,10 +156,6 @@ pre#logs {
 .owner-img {
     border-radius: 5px;
     width: 40px;
-}
-
-a.repository-link {
-    color: #fff
 }
 
 /* Rework clear framework */

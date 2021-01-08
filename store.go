@@ -55,6 +55,7 @@ type Query struct {
 type Pipelines struct {
 	Pipelines []Pipeline
 	Counts    struct {
+		Statuses     map[string]int
 		Owners       map[string]int
 		Repositories map[string]int
 		Branches     map[string]int
@@ -62,17 +63,10 @@ type Pipelines struct {
 	}
 }
 
-// RecentPipelines returns the recent pipelines for the header
-func (p *Pipelines) RecentPipelines() []Pipeline {
-	if len(p.Pipelines) <= 3 {
-		return p.Pipelines
-	}
-	return p.Pipelines[0:3]
-}
-
 func (s *Store) All() (*Pipelines, error) {
 	request := bleve.NewSearchRequest(bleve.NewMatchAllQuery())
 	request.SortBy([]string{"-Start"})
+	request.AddFacet("Status", bleve.NewFacetRequest("Status", 5))
 	request.AddFacet("Owner", bleve.NewFacetRequest("Owner", 5))
 	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 20))
 	request.AddFacet("Branch", bleve.NewFacetRequest("Branch", 20))
@@ -91,6 +85,7 @@ func (s *Store) All() (*Pipelines, error) {
 func (s *Store) Query(q Query) (*Pipelines, error) {
 	request := bleve.NewSearchRequest(q.ToBleveQuery())
 	request.SortBy([]string{"-Start"})
+	request.AddFacet("Status", bleve.NewFacetRequest("Status", 5))
 	request.AddFacet("Owner", bleve.NewFacetRequest("Owner", 5))
 	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 20))
 	request.AddFacet("Branch", bleve.NewFacetRequest("Branch", 20))
@@ -143,6 +138,8 @@ func bleveResultToPipelines(result *bleve.SearchResult) Pipelines {
 			counts[term.Term] = term.Count
 		}
 		switch facet.Field {
+		case "Status":
+			pipelines.Counts.Statuses = counts
 		case "Owner":
 			pipelines.Counts.Owners = counts
 		case "Repository":
