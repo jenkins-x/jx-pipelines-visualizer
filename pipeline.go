@@ -47,6 +47,8 @@ func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 	}
 	if pa.Spec.StartedTimestamp != nil {
 		p.Start = pa.Spec.StartedTimestamp.Time
+	} else {
+		p.Start = pa.CreationTimestamp.Time
 	}
 	if pa.Spec.CompletedTimestamp != nil {
 		p.End = pa.Spec.CompletedTimestamp.Time
