@@ -48,6 +48,7 @@ func (r Router) Handler() (http.Handler, error) {
 	})
 
 	router := mux.NewRouter()
+	router.StrictSlash(true)
 
 	kClient, err := kubernetes.NewForConfig(r.KConfig)
 	if err != nil {
