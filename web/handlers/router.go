@@ -41,6 +41,9 @@ func (r Router) Handler() (http.Handler, error) {
 			sprig.HtmlFuncMap(),
 			htmltemplate.FuncMap{
 				"pipelinePullRequestURL": functions.PipelinePullRequestURL,
+				"repositoryURL":          functions.RepositoryURL,
+				"branchURL":              functions.BranchURL,
+				"authorURL":              functions.AuthorURL,
 				"vdate":                  functions.VDate,
 				"isAvailable":            functions.IsAvailable,
 			},

@@ -1,4 +1,5 @@
 {{ define "css-home" }}
+    <link rel="stylesheet" href="/static/lib/clr-icons.min.css">
     <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
 {{ end }}
 
@@ -6,6 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" type="text/javascript" defer></script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" type="text/javascript" defer></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js" type="text/javascript" defer></script>
+<script src="/static/lib/clr-icons.min.js" defer></script>
 <script src="/static/home/index.js" type="text/javascript" defer></script>
 {{ end }}
 
@@ -60,8 +62,29 @@
         <tbody>
             {{ range .Pipelines.Pipelines }}
             <tr>
-                <td><a href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a></td>
-                <td data-order="{{ .Branch }}"><img src='{{ if not .AuthorAvatarURL }}{{ "/static/avatar.png" }}{{ else }}{{ .AuthorAvatarURL }}{{ end }}' title="{{ .Author }}" width="20px"> <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a></td>
+                <td>
+                    <a href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a>
+                    {{- if repositoryURL . -}}
+                    <span>
+                        <a href="{{ repositoryURL . }}"><clr-icon shape="pop-out" size="12"></clr-icon></a>
+                    </span>
+                    {{- end -}}
+                </td>
+                <td data-order="{{ .Branch }}">
+                    {{- if authorURL . -}}
+                    <a href="{{ authorURL . }}"><img src='{{ if not .AuthorAvatarURL }}{{ "/static/avatar.png" }}{{ else }}{{ .AuthorAvatarURL }}{{ end }}' title="{{ .Author }}" width="20px"></a>
+                    {{- else -}}
+                    <img src='{{ if not .AuthorAvatarURL }}{{ "/static/avatar.png" }}{{ else }}{{ .AuthorAvatarURL }}{{ end }}' title="{{ .Author }}" width="20px">
+                    {{- end -}}
+                    <span>
+                        <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a>
+                    </span>
+                    {{- if branchURL . -}}
+                    <span>
+                        <a href="{{ branchURL . }}"><clr-icon shape="pop-out" size="12"></clr-icon></a>
+                    </span>
+                    {{- end -}}
+                </td>
                 <td><a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a></td>
                 <td>{{ .Context }}</td>
                 <td class="status-{{ lower .Status }}">{{ .Status }}</td>

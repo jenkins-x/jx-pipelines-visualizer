@@ -169,6 +169,7 @@ func bleveDocToPipeline(doc *search.DocumentMatch) Pipeline {
 	}
 	return Pipeline{
 		Name:            doc.Fields["Name"].(string),
+		Provider:        doc.Fields["Provider"].(string),
 		Owner:           doc.Fields["Owner"].(string),
 		Repository:      doc.Fields["Repository"].(string),
 		Branch:          doc.Fields["Branch"].(string),
