@@ -1,6 +1,7 @@
 package visualizer
 
 import (
+	"strings"
 	"time"
 
 	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
@@ -8,6 +9,7 @@ import (
 
 type Pipeline struct {
 	Name            string
+	Provider        string
 	Owner           string
 	Repository      string
 	Branch          string
@@ -22,9 +24,17 @@ type Pipeline struct {
 	Duration        time.Duration
 }
 
+func (p Pipeline) PullRequestNumber() string {
+	if strings.HasPrefix(p.Branch, "PR-") {
+		return strings.TrimPrefix(p.Branch, "PR-")
+	}
+	return ""
+}
+
 func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 	p := Pipeline{
 		Name:            pa.Name,
+		Provider:        pa.Labels["provider"],
 		Owner:           pa.Spec.GitOwner,
 		Repository:      pa.Spec.GitRepository,
 		Branch:          pa.Spec.GitBranch,
