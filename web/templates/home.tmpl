@@ -84,7 +84,7 @@
                 </td>
                 <td><a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a></td>
                 <td>{{ .Context }}</td>
-                <td class="status-{{ lower .Status }}">{{ .Status }}</td>
+                <td class="status-{{ lower .Status }}" title="{{ .Description }}">{{ .Status }}</td>
                 <td data-order='{{ .Start.Format "2006-01-02 15:04:05" }}'>
                     {{- if (vdate .Start).IsToday -}}
                         {{ .Start.Format "15:04:05" }}
