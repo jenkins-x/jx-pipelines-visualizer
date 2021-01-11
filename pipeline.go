@@ -19,6 +19,7 @@ type Pipeline struct {
 	AuthorAvatarURL string
 	Commit          string
 	Status          string
+	Description     string
 	Start           time.Time
 	End             time.Time
 	Duration        time.Duration
@@ -44,6 +45,7 @@ func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 		AuthorAvatarURL: pa.Spec.AuthorAvatarURL,
 		Commit:          pa.Spec.LastCommitSHA,
 		Status:          string(pa.Spec.Status),
+		Description:     pa.Annotations["description"],
 	}
 	if pa.Spec.StartedTimestamp != nil {
 		p.Start = pa.Spec.StartedTimestamp.Time
