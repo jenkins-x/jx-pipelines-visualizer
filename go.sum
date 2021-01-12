@@ -880,6 +880,7 @@ github.com/jenkins-x/jx-pipeline v0.0.69 h1:oDYA9QWUvMpx22kggPOXDHB/udcSNesCmuaU
 github.com/jenkins-x/jx-pipeline v0.0.69/go.mod h1:55L2rcX+l8xgn5MVR8+yqKrKpk5qhhIEQClgSTlXji4=
 github.com/jenkins-x/jx-pipeline v0.0.71 h1:FBewzZnnKpLH6smXVZTaPxGD4oulxy+9QaD6Pp4YaBc=
 github.com/jenkins-x/jx-pipeline v0.0.71/go.mod h1:kh3uwSYtQ5i4d5BkEcoD/M9PbO0E0svWfdEae4PNnBk=
+github.com/jenkins-x/jx-pipeline v0.0.76 h1:t0pGmVDemGZ+EZEul0ZElGUiM4AOLnpI0AZqWSDp02M=
 github.com/jenkins-x/lighthouse v0.0.854/go.mod h1:0fZogTuRV3npYgg4gbR7XCXyJ06kLmhtKlzAC/vKtvc=
 github.com/jenkins-x/lighthouse v0.0.876/go.mod h1:6bxtTkLu6Yj5MOqZrMd6ueFDNlMxcpeDDMT6Xjh4/SE=
 github.com/jenkins-x/lighthouse v0.0.878/go.mod h1:VFtk1v2AlwCcmo3s67uUGP+vHqgwgv0Ld0lJlwsUnNc=

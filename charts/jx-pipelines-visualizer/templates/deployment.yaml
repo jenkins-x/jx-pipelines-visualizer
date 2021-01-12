@@ -45,6 +45,10 @@ spec:
         - -archived-logs-url-template
         - {{ . }}
         {{- end }}
+        {{- with .Values.config.archivedPipelinesURLTemplate }}
+        - -archived-pipelines-url-template
+        - {{ . }}
+        {{- end }}
         {{- with .Values.config.logLevel }}
         - -log-level
         - {{ . }}

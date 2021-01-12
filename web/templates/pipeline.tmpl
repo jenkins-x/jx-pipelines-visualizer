@@ -142,7 +142,11 @@
                     {{end}}
                     <div class="clr-timeline-step-body">
                         <span class="clr-timeline-step-title" title="{{ $step.Description }}">
-                            <a href='#log-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}-step-{{ $step.Name | lower | replace " " "-" }}'>{{ $step.Name }}</a>
+                            {{- if hasPrefix "step" (lower $step.Name) -}}
+                                <a href='#log-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}-{{ $step.Name | lower | replace " " "-" }}'>{{ $step.Name }}</a>
+                            {{- else -}}
+                                <a href='#log-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}-step-{{ $step.Name | lower | replace " " "-" }}'>{{ $step.Name }}</a>
+                            {{- end -}}
                         </span>
                         {{- if (eq $step.Status "Failed") -}}
                         <span class="clr-timeline-step-description">{{ $step.Description }}</span>

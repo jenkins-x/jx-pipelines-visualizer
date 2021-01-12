@@ -7,6 +7,8 @@ gitSecretName: tekton-git
 config:
   # gs://BUCKET_NAME/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch \"pr\"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log
   archivedLogsURLTemplate:
+  # gs://BUCKET_NAME/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch \"pr\"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.yaml
+  archivedPipelinesURLTemplate:
   namespace: jx
   resyncInterval: 60s
   logLevel: INFO
