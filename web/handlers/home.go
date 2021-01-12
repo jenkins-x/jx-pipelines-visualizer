@@ -16,7 +16,18 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	pipelines, err := h.Store.All()
+	var (
+		query     = r.URL.Query().Get("q")
+		pipelines *visualizer.Pipelines
+		err       error
+	)
+	if query != "" {
+		pipelines, err = h.Store.Query(visualizer.Query{
+			Query: query,
+		})
+	} else {
+		pipelines, err = h.Store.All()
+	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -24,8 +35,10 @@ func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Render.HTML(w, http.StatusOK, "home", struct {
 		Pipelines *visualizer.Pipelines
+		Query     string
 	}{
 		pipelines,
+		query,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

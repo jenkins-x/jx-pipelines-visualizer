@@ -22,6 +22,7 @@ func (h *OwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	pipelines, err := h.Store.Query(visualizer.Query{
 		Owner: owner,
+		Query: r.URL.Query().Get("q"),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -30,9 +31,11 @@ func (h *OwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Render.HTML(w, http.StatusOK, "home", struct {
 		Owner     string
+		Query     string
 		Pipelines *visualizer.Pipelines
 	}{
 		owner,
+		r.URL.Query().Get("q"),
 		pipelines,
 	})
 	if err != nil {

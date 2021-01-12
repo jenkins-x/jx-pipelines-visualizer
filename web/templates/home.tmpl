@@ -1,16 +1,15 @@
 {{ define "css-home" }}
-    <link rel="stylesheet" href="/static/lib/clr-icons.min.css">
-    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <link href="/static/lib/clr-icons.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css" integrity="sha512-1k7mWiTNoyx2XtmI96o+hdjP8nn0f3Z2N4oF/9ZZRgijyV4omsKOXEnqL1gKQNPy2MTSP9rIEWGcH/CInulptA==" crossorigin="anonymous" type="text/css" rel="stylesheet" />
 {{ end }}
 
 {{ define "js-home" }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" type="text/javascript" defer></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js" type="text/javascript" defer></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js" type="text/javascript" defer></script>
-<script src="/static/lib/clr-icons.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="/static/lib/clr-icons.min.js" type="text/javascript" defer></script>
 <script src="/static/home/index.js" type="text/javascript" defer></script>
 {{ end }}
-
 
 {{ define "header-home" }}
 <h1 class="header-title">
@@ -24,21 +23,93 @@
             {{ end }}
         {{ end }}
     {{ end }}
+    {{ if and (isAvailable . "Query") .Query }}
+        &gt; <a href="?q={{ .Query }}">{{ .Query }}</a>
+    {{ end }}
   </h1>
-
 <!-- <input type="text" placeholder="Search Pipelines (not implemented)" /> -->
 {{ end }}
 
 <section class="in-building">
-    <div class="pipeline-cards">
-        {{- range list "Pending" "Running" "Failed" "Succeeded" -}}
-        {{- $pipelines := index $.Pipelines.Counts.Statuses . -}}
-        {{- if gt $pipelines 0 -}}
-        <div class="pipeline-card pipeline-card-{{ lower . }}">
-            <span><a href="/?q={{ . }}">{{ $pipelines }} {{ . }}</a></span>
+    <div class="clr-row">
+        <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
+            <div class="card pipeline-card">
+                <span class="title card-header">Top Statuses</span>
+                <ul class="card-block">
+                    {{- range (sortPipelineCounts .Pipelines.Counts.Statuses) -}}
+                    {{- if and .value -}}
+                    <li>
+                        <span class="count">{{ .value }}</span>
+                        <span class='key label pipeline-status status-{{ lower .key | default "none" }}'>
+                            {{- if or (eq .key "Other") (eq .key "") -}}
+                            {{ .key | default "None" }}
+                            {{- else -}}
+                            <a href="?q=Status:{{ .key }}">{{ .key }}</a>
+                            {{- end -}}
+                        </span>
+                    </li>
+                    {{- end -}}
+                    {{- end -}}
+                </ul>
+            </div>
         </div>
-        {{- end -}}
-        {{- end -}}
+        <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
+            <div class="card pipeline-card">
+                <span class="title card-header">Top Repositories</span>
+                <ul class="card-block">
+                    {{- range (sortPipelineCounts .Pipelines.Counts.Repositories) -}}
+                    {{- if and .key .value -}}
+                    <li>
+                        <span class="count">{{ .value }}</span>
+                        <span class="key">
+                            {{- if eq .key "Other" -}}
+                            {{ .key }}
+                            {{- else -}}
+                            <a href="?q=Repository:{{ .key }}">{{ .key }}</a>
+                            {{- end -}}
+                        </span>
+                    </li>
+                    {{- end -}}
+                    {{- end -}}
+                </ul>
+            </div>
+        </div>
+        <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
+            <div class="card pipeline-card">
+                <span class="title card-header">Top Authors</span>
+                <ul class="card-block">
+                    {{- range (sortPipelineCounts .Pipelines.Counts.Authors) -}}
+                    {{- if and .key .value -}}
+                    <li>
+                        <span class="count">{{ .value }}</span>
+                        <span class="key">
+                            {{- if eq .key "Other" -}}
+                            {{ .key }}
+                            {{- else -}}
+                            <a href="?q=Author:{{ .key }}">{{ .key }}</a>
+                            {{- end -}}
+                        </span>
+                    </li>
+                    {{- end -}}
+                    {{- end -}}
+                </ul>
+            </div>
+        </div>
+        <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
+            <div class="card pipeline-card">
+                <span class="title card-header">Top Durations</span>
+                <ul class="card-block">
+                    {{- range (sortPipelineCounts .Pipelines.Counts.Durations) -}}
+                    {{- if and .key .value -}}
+                    <li>
+                        <span class="count">{{ .value }}</span>
+                        <span class="key">{{ .key }}</span>
+                    </li>
+                    {{- end -}}
+                    {{- end -}}
+                </ul>
+            </div>
+        </div>
     </div>
 </section>
 <section class="dataTable-container">
