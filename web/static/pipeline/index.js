@@ -114,16 +114,18 @@
     }
 
     const addDisplayStepsEvent = () => {
-        displayStepsCheckbox.addEventListener('click', function(event) {
-            var stages = document.querySelectorAll('.stage');
-            Array.from(stages).forEach(stage => {
-                if (displayStepsCheckbox.checked) {
-                    stage.classList.remove('steps-hidden');
-                } else {
-                    stage.classList.add('steps-hidden');
-                }
+        if (displayStepsCheckbox) {
+            displayStepsCheckbox.addEventListener('click', function(event) {
+                var stages = document.querySelectorAll('.stage');
+                Array.from(stages).forEach(stage => {
+                    if (displayStepsCheckbox.checked) {
+                        stage.classList.remove('steps-hidden');
+                    } else {
+                        stage.classList.add('steps-hidden');
+                    }
+                });
             });
-        });
+        }
     }
 
     const generateDownloadLink = (logs) => {

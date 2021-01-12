@@ -23,13 +23,14 @@ import (
 )
 
 type Router struct {
-	Store                   *visualizer.Store
-	KConfig                 *rest.Config
-	PAInterface             jenkinsv1.PipelineActivityInterface
-	Namespace               string
-	ArchivedLogsURLTemplate string
-	Logger                  *logrus.Logger
-	render                  *render.Render
+	Store                        *visualizer.Store
+	KConfig                      *rest.Config
+	PAInterface                  jenkinsv1.PipelineActivityInterface
+	Namespace                    string
+	ArchivedLogsURLTemplate      string
+	ArchivedPipelinesURLTemplate string
+	Logger                       *logrus.Logger
+	render                       *render.Render
 }
 
 func (r Router) Handler() (http.Handler, error) {
@@ -75,6 +76,14 @@ func (r Router) Handler() (http.Handler, error) {
 		}
 	}
 
+	var archivedPipelinesURLTemplate *template.Template
+	if len(r.ArchivedPipelinesURLTemplate) > 0 {
+		archivedPipelinesURLTemplate, err = template.New("archivedPipelinesURL").Funcs(sprig.TxtFuncMap()).Parse(r.ArchivedPipelinesURLTemplate)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	router.Handle("/", &HomeHandler{
 		Store:  r.Store,
 		Render: r.render,
@@ -102,9 +111,11 @@ func (r Router) Handler() (http.Handler, error) {
 	})
 
 	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
-		PAInterface: r.PAInterface,
-		Render:      r.render,
-		Logger:      r.Logger,
+		PAInterface:                r.PAInterface,
+		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
+		BuildLogsURLTemplate:       archivedLogsURLTemplate,
+		Render:                     r.render,
+		Logger:                     r.Logger,
 	})
 
 	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
