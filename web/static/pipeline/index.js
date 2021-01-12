@@ -4,6 +4,7 @@
     const errors = document.getElementById("errors");
     const downloadLink = document.getElementById("downloadLogs");
 
+    const displayStepsCheckbox = document.querySelector('.display-steps');
     const followLogsCheckbox = document.querySelector('.follow-logs');
     const logsTable = document.querySelector('.logs-table');
     const stickyHeader = document.querySelector('.header-hidden');
@@ -30,13 +31,26 @@
     };
 
     const transformLogIntoHtml = (lineNumber, text, type='') => {
+        var containerId = "";
+        if (text.startsWith('Showing logs for build ')) {
+            const regex = /\[32m([^\[])+\[0m/g;
+            const matches = text.match(regex);
+            if (matches.length == 3) {
+                const stage = matches[1].replace('[32m', '').replace('[0m', '').slice(0, -1);
+                const container = matches[2].replace('[32m', '').replace('[0m', '').slice(0, -1);
+                containerId = "log-" + stage + "-" + container;
+            }
+        }
+
+        const html = ansi_up.ansi_to_html(text)
+
         // Transform url to link element
-        const transformedText = text.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
+        const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
 
         return `
         <tr id="logsL${lineNumber}">
             <td class="log-number" data-line-number=${lineNumber}></td>
-            <td class="log-line">
+            <td class="log-line" id="${containerId}">
                 <span class="line-text ${type}">${transformedText}</span>
             </td>
         </tr>
@@ -89,6 +103,29 @@
         });
     }
 
+    const addStageStepsLinksEvent = () => {
+        var links = document.querySelectorAll('.stage-steps-link');
+
+        Array.from(links).forEach(link => {
+            link.addEventListener('click', function(event) {
+                document.querySelector(link.getAttribute('href')).classList.remove('steps-hidden');
+            });
+        });
+    }
+
+    const addDisplayStepsEvent = () => {
+        displayStepsCheckbox.addEventListener('click', function(event) {
+            var stages = document.querySelectorAll('.stage');
+            Array.from(stages).forEach(stage => {
+                if (displayStepsCheckbox.checked) {
+                    stage.classList.remove('steps-hidden');
+                } else {
+                    stage.classList.add('steps-hidden');
+                }
+            });
+        });
+    }
+
     const generateDownloadLink = (logs) => {
         var blob = new Blob([logs], { type : "text/plain;charset=utf-8"});
         downloadUrl = URL.createObjectURL(blob);
@@ -98,12 +135,12 @@
 
     const loadByBuildLogUrl = () => {
         fetch(`${LOGS_URL}/logs`).then(response => response.text()).then((response) => {
-            logs.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(response));
+            logs.innerHTML = transformLogsIntoHtml(response);
             addLinks();
             goToAnchor();
             generateDownloadLink(response);
         }).catch((error)=> {
-            errors.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(error), 'line-error');
+            errors.innerHTML = transformLogsIntoHtml(error, 'line-error');
         });
     };
 
@@ -122,7 +159,7 @@
                     logs.innerHTML = "";
                 }
 
-                logs.insertAdjacentHTML('beforeend', transformLogsIntoHtml(ansi_up.ansi_to_html(logsBuffer), '', () => ++lineNumber));
+                logs.insertAdjacentHTML('beforeend', transformLogsIntoHtml(logsBuffer, '', () => ++lineNumber));
                 addLinks();
                 if (!getAnchor) {
                     getAnchor = goToAnchor();
@@ -142,7 +179,7 @@
             logsBuffer += e.data + "\n";
         }, {passive: true});
         eventSource.addEventListener("error", function(e) {
-            errors.innerHTML = transformLogsIntoHtml(ansi_up.ansi_to_html(e.data), 'line-error');
+            errors.innerHTML = transformLogsIntoHtml(e.data, 'line-error');
         });
         eventSource.addEventListener("EOF", function(e) {
             eventSource.close();
@@ -155,6 +192,8 @@
 
 
     // Run
+    addStageStepsLinksEvent();
+    addDisplayStepsEvent();
     addScrollEvent();
     addColorThemeOption();
 

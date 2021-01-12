@@ -16,6 +16,9 @@
 
 {{ define "header-pipeline" }}
 <h1 class="header-title">
+  <span class="logo">
+    <img src="/static/jenkins-x.svg" width="100px" />
+  </span>
   <span class="pipeline-root-links">
     <a href="/">Pipelines</a> &gt;
     <a href="/{{ .Pipeline.Spec.GitOwner }}">{{ .Pipeline.Spec.GitOwner }}</a> &gt;
@@ -59,24 +62,31 @@
         {{ range $pipeStep := .Pipeline.Spec.Steps }}
             {{ if $pipeStep.Stage }}
             <li class="clr-timeline-step">
-                {{- if $pipeStep.Stage.CompletedTimestamp }}
-                    <div class="clr-timeline-step-header">{{ $pipeStep.Stage.CompletedTimestamp.Format "15:04:05" }}</div>
-                {{ else if $pipeStep.Stage.StartedTimestamp }}
-                    <div class="clr-timeline-step-header">{{ $pipeStep.Stage.StartedTimestamp.Format "15:04:05" }}</div>
-                {{ else }}
-                    <div class="clr-timeline-step-header">{{ $pipeStep.Stage.Status }}</div>
-                {{ end }}
+                <div class="clr-timeline-step-header">
+                    {{- if and $pipeStep.Stage.StartedTimestamp $pipeStep.Stage.CompletedTimestamp }}
+                        {{ $pipeStep.Stage.CompletedTimestamp.Sub $pipeStep.Stage.StartedTimestamp.Time }}
+                    {{ else if $pipeStep.Stage.StartedTimestamp }}
+                        Started at {{ $pipeStep.Stage.StartedTimestamp.Format "15:04:05" }}
+                    {{ else }}
+                        {{ $pipeStep.Stage.Status }}
+                    {{ end }}
+                </div>
                 {{- if (eq $pipeStep.Stage.Status "Succeeded")}}
-                    <clr-icon shape="success-standard" aria-label="Completed"></clr-icon>
+                    <clr-icon shape="success-standard" aria-label="Completed" title="{{ $pipeStep.Stage.Description }}"></clr-icon>
                 {{- else if (eq $pipeStep.Stage.Status "Running")}}
-                    <clr-icon shape="dot-circle" aria-current="true" aria-label="Current"></clr-icon>
+                    <clr-icon shape="dot-circle" aria-current="true" aria-label="Current" title="{{ $pipeStep.Stage.Description }}"></clr-icon>
                 {{- else if (eq $pipeStep.Stage.Status "Failed")}}
-                    <clr-icon shape="error-standard" aria-label="Error"></clr-icon>
+                    <clr-icon shape="error-standard" aria-label="Error" title="{{ $pipeStep.Stage.Description }}"></clr-icon>
                 {{- else }}
                     <clr-icon shape="circle" aria-label="Not started"></clr-icon>
                 {{end}}
                 <div class="clr-timeline-step-body">
-                    <span class="clr-timeline-step-title">{{ $pipeStep.Stage.Name }}</span>
+                    <span class="clr-timeline-step-title" title="{{ $pipeStep.Stage.Description }}">
+                        <a class="stage-steps-link" href='#steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>{{ $pipeStep.Stage.Name }}</a>
+                    </span>
+                    {{- if (eq $pipeStep.Stage.Status "Failed") -}}
+                    <span class="clr-timeline-step-description">{{ $pipeStep.Stage.Description }}</span>
+                    {{- end -}}
                 </div>
             </li>
             {{ end }}
@@ -91,14 +101,59 @@
                 <span></span>
             </label>
         </div>
+        <div class="steps-option">
+            <input class="display-steps" type="checkbox" name="display">
+            <label for="display">Display steps</label>
+        </div>
         <div class="follow-option">
             <input class="follow-logs" type="checkbox" name="follow" checked>
             <label for="follow">Follow logs</label>
         </div>
         <div class="raw-logs-options">
-            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
+            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
             <a class="option-button" id="downloadLogs" download="{{.Pipeline.Spec.GitOwner}}-{{.Pipeline.Spec.GitRepository}}-{{.Pipeline.Spec.GitBranch}}-{{.Pipeline.Spec.Build}}.txt">Download raw logs</a>
         </div>
+    </div>
+    <div class="steps in-building">
+        {{- range $pipeStep := .Pipeline.Spec.Steps -}}
+        {{- if $pipeStep.Stage -}}
+        <div class="stage steps-hidden" id='steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>
+            <span class="stage-name">{{ $pipeStep.Stage.Name }}</span>
+            <ul class="clr-timeline clr-timeline-vertical">
+                {{- range $step := $pipeStep.Stage.Steps -}}
+                <li class="clr-timeline-step">
+                    <div class="clr-timeline-step-header">
+                        {{- if and $step.StartedTimestamp $step.CompletedTimestamp }}
+                            {{ $step.CompletedTimestamp.Sub $step.StartedTimestamp.Time }}
+                        {{ else if $step.StartedTimestamp }}
+                            Started at {{ $step.StartedTimestamp.Format "15:04:05" }}
+                        {{ else }}
+                            {{ $step.Status }}
+                        {{ end }}
+                    </div>
+                    {{- if (eq $step.Status "Succeeded")}}
+                        <clr-icon shape="success-standard" aria-label="Completed" title="{{ $step.Description }}"></clr-icon>
+                    {{- else if (eq $step.Status "Running")}}
+                        <clr-icon shape="dot-circle" aria-current="true" aria-label="Current" title="{{ $step.Description }}"></clr-icon>
+                    {{- else if (eq $step.Status "Failed")}}
+                        <clr-icon shape="error-standard" aria-label="Error" title="{{ $step.Description }}"></clr-icon>
+                    {{- else }}
+                        <clr-icon shape="circle" aria-label="Not started"></clr-icon>
+                    {{end}}
+                    <div class="clr-timeline-step-body">
+                        <span class="clr-timeline-step-title" title="{{ $step.Description }}">
+                            <a href='#log-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}-step-{{ $step.Name | lower | replace " " "-" }}'>{{ $step.Name }}</a>
+                        </span>
+                        {{- if (eq $step.Status "Failed") -}}
+                        <span class="clr-timeline-step-description">{{ $step.Description }}</span>
+                        {{- end -}}
+                    </div>
+                </li>
+                {{- end -}}
+            </ul>
+        </div>
+        {{- end -}}
+        {{- end -}}
     </div>
     <table class="error-logs-table">
         <colgroup>

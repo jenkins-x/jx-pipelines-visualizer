@@ -57,6 +57,10 @@ body {
     font-size: 22px;
 }
 
+.top-header .header-title .logo {
+    margin-right: 30px;
+}
+
 .main-container {
     background-color: var(--color-background-darker);
     padding-left: 50px;
