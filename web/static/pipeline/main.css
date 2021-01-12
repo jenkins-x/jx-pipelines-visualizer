@@ -131,6 +131,19 @@
     border-right: 1px solid var(--main-color);
 }
 
+.steps {
+    background: var(--color-background);
+}
+
+.stage .stage-name {
+    font-weight: bold;
+}
+
+.steps-hidden {
+    display: none;
+    visibility: hidden;
+}
+
 .header-hidden {
     height: 0;
     overflow: hidden;

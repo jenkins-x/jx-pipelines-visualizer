@@ -13,6 +13,9 @@
 
 {{ define "header-home" }}
 <h1 class="header-title">
+    <span class="logo">
+        <img src="/static/jenkins-x.svg" width="100px" />
+    </span>
     <a href="/">Pipelines</a>
     {{ if (isAvailable . "Owner") }}
         &gt; <a href="/{{ .Owner }}">{{ .Owner }}</a>
