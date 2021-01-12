@@ -70,44 +70,28 @@ body {
     justify-content: space-between;
 }
 
-.pipeline-cards {
-    display: flex;
-    justify-content: space-between;
-}
-
 .pipeline-card {
-    background-color: var(--main-color);
-    width: 300px;
     display: flex;
     flex-direction: column;
     border-radius: 7px;
     padding: 10px;
-    color: #fff;
 }
 
-.pipeline-card span {
+.pipeline-card span.title {
     font-weight: bold;
-    margin-bottom: 10px;
 }
 
-.pipeline-card a {
-    color: #fff
+.pipeline-card ul {
+    list-style-type: none;
 }
 
-.pipeline-card-pending {
-    background-color: var(--color-pending);
+.pipeline-card ul li span.count {
+    display: inline-block;
+    width: 30px;
 }
 
-.pipeline-card-running {
-    background-color: var(--color-running);
-}
-
-.pipeline-card-failed {
-    background-color: var(--color-error);
-}
-
-.pipeline-card-succeeded {
-    background-color: var(--color-success);
+.pipeline-card span.pipeline-status a, .pipeline-card span.pipeline-status a:visited, .pipeline-card span.pipeline-status a:hover, .pipeline-card span.pipeline-status a:active {
+    color: inherit;
 }
 
 .pipeline {

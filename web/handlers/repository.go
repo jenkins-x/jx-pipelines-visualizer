@@ -24,6 +24,7 @@ func (h *RepositoryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	pipelines, err := h.Store.Query(visualizer.Query{
 		Owner:      owner,
 		Repository: repository,
+		Query:      r.URL.Query().Get("q"),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -33,10 +34,12 @@ func (h *RepositoryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err = h.Render.HTML(w, http.StatusOK, "home", struct {
 		Owner      string
 		Repository string
+		Query      string
 		Pipelines  *visualizer.Pipelines
 	}{
 		owner,
 		repository,
+		r.URL.Query().Get("q"),
 		pipelines,
 	})
 	if err != nil {

@@ -30,6 +30,7 @@ func (h *BranchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Owner:      owner,
 		Repository: repository,
 		Branch:     branch,
+		Query:      r.URL.Query().Get("q"),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -40,11 +41,13 @@ func (h *BranchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Owner      string
 		Repository string
 		Branch     string
+		Query      string
 		Pipelines  *visualizer.Pipelines
 	}{
 		owner,
 		repository,
 		branch,
+		r.URL.Query().Get("q"),
 		pipelines,
 	})
 	if err != nil {

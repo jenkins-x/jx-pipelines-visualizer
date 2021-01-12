@@ -50,27 +50,23 @@ type Query struct {
 	Owner      string
 	Repository string
 	Branch     string
+	Query      string
 }
 
 type Pipelines struct {
 	Pipelines []Pipeline
 	Counts    struct {
 		Statuses     map[string]int
-		Owners       map[string]int
 		Repositories map[string]int
-		Branches     map[string]int
-		Builds       map[string]int
+		Authors      map[string]int
+		Durations    map[string]int
 	}
 }
 
 func (s *Store) All() (*Pipelines, error) {
 	request := bleve.NewSearchRequest(bleve.NewMatchAllQuery())
 	request.SortBy([]string{"-Start"})
-	request.AddFacet("Status", bleve.NewFacetRequest("Status", 5))
-	request.AddFacet("Owner", bleve.NewFacetRequest("Owner", 5))
-	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 20))
-	request.AddFacet("Branch", bleve.NewFacetRequest("Branch", 20))
-	request.AddFacet("Build", bleve.NewFacetRequest("Build", 20))
+	addFacetRequests(request)
 	request.Size = 10000
 	request.Fields = []string{"*"}
 	result, err := s.Index.Search(request)
@@ -85,11 +81,7 @@ func (s *Store) All() (*Pipelines, error) {
 func (s *Store) Query(q Query) (*Pipelines, error) {
 	request := bleve.NewSearchRequest(q.ToBleveQuery())
 	request.SortBy([]string{"-Start"})
-	request.AddFacet("Status", bleve.NewFacetRequest("Status", 5))
-	request.AddFacet("Owner", bleve.NewFacetRequest("Owner", 5))
-	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 20))
-	request.AddFacet("Branch", bleve.NewFacetRequest("Branch", 20))
-	request.AddFacet("Build", bleve.NewFacetRequest("Build", 20))
+	addFacetRequests(request)
 	request.Size = 10000
 	request.Fields = []string{"*"}
 	result, err := s.Index.Search(request)
@@ -103,7 +95,14 @@ func (s *Store) Query(q Query) (*Pipelines, error) {
 
 func (q Query) ToBleveQuery() query.Query {
 	var queryString strings.Builder
+	if len(q.Query) > 0 {
+		queryString.WriteString("+")
+		queryString.WriteString(q.Query)
+	}
 	if len(q.Owner) > 0 {
+		if queryString.Len() > 0 {
+			queryString.WriteString(" ")
+		}
 		queryString.WriteString("+Owner:")
 		queryString.WriteString(q.Owner)
 	}
@@ -137,17 +136,19 @@ func bleveResultToPipelines(result *bleve.SearchResult) Pipelines {
 		for _, term := range facet.Terms {
 			counts[term.Term] = term.Count
 		}
+		for _, numericRange := range facet.NumericRanges {
+			counts[numericRange.Name] = numericRange.Count
+		}
+		counts["Other"] = facet.Other
 		switch facet.Field {
 		case "Status":
 			pipelines.Counts.Statuses = counts
-		case "Owner":
-			pipelines.Counts.Owners = counts
 		case "Repository":
 			pipelines.Counts.Repositories = counts
-		case "Branch":
-			pipelines.Counts.Branches = counts
-		case "Build":
-			pipelines.Counts.Builds = counts
+		case "Author":
+			pipelines.Counts.Authors = counts
+		case "Duration":
+			pipelines.Counts.Durations = counts
 		}
 	}
 
@@ -181,4 +182,21 @@ func bleveDocToPipeline(doc *search.DocumentMatch) Pipeline {
 		End:             endDate,
 		Duration:        time.Duration(doc.Fields["Duration"].(float64)),
 	}
+}
+
+func addFacetRequests(request *bleve.SearchRequest) {
+	request.AddFacet("Status", bleve.NewFacetRequest("Status", 3))
+	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 3))
+	request.AddFacet("Author", bleve.NewFacetRequest("Author", 3))
+	durationFacet := bleve.NewFacetRequest("Duration", 4)
+	durationFacet.AddNumericRange("< 5 min", nil, durationAsFloat64Ptr(5*time.Minute))
+	durationFacet.AddNumericRange("5-15 min", durationAsFloat64Ptr(5*time.Minute), durationAsFloat64Ptr(15*time.Minute))
+	durationFacet.AddNumericRange("15-30 min", durationAsFloat64Ptr(15*time.Minute), durationAsFloat64Ptr(30*time.Minute))
+	durationFacet.AddNumericRange("> 30 min", durationAsFloat64Ptr(30*time.Minute), nil)
+	request.AddFacet("Duration", durationFacet)
+}
+
+func durationAsFloat64Ptr(d time.Duration) *float64 {
+	nanos := float64(d.Nanoseconds())
+	return &nanos
 }

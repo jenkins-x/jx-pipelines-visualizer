@@ -45,6 +45,7 @@ func (r Router) Handler() (http.Handler, error) {
 				"branchURL":              functions.BranchURL,
 				"authorURL":              functions.AuthorURL,
 				"vdate":                  functions.VDate,
+				"sortPipelineCounts":     functions.SortPipelineCounts,
 				"isAvailable":            functions.IsAvailable,
 			},
 		},

@@ -28,7 +28,10 @@ func (i *Informer) Start(ctx context.Context) {
 
 	informerFactory.Jenkins().V1().PipelineActivities().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			pa := obj.(*jenkinsv1.PipelineActivity)
+			pa, ok := obj.(*jenkinsv1.PipelineActivity)
+			if !ok {
+				return
+			}
 
 			// don't index (static) Jenkins PipelineActivity
 			if _, found := GetContext(pa); !found {
@@ -48,7 +51,10 @@ func (i *Informer) Start(ctx context.Context) {
 			}
 		},
 		UpdateFunc: func(old, new interface{}) {
-			pa := new.(*jenkinsv1.PipelineActivity)
+			pa, ok := new.(*jenkinsv1.PipelineActivity)
+			if !ok {
+				return
+			}
 
 			// don't index (static) Jenkins PipelineActivity
 			if _, found := GetContext(pa); !found {
@@ -68,7 +74,11 @@ func (i *Informer) Start(ctx context.Context) {
 			}
 		},
 		DeleteFunc: func(obj interface{}) {
-			pa := obj.(*jenkinsv1.PipelineActivity)
+			pa, ok := obj.(*jenkinsv1.PipelineActivity)
+			if !ok {
+				return
+			}
+
 			if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
 				i.Logger.WithField("PipelineActivity", pa.Name).Debug("Deleting PipelineActivity")
 			}
