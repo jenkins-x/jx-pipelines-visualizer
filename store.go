@@ -185,7 +185,7 @@ func bleveDocToPipeline(doc *search.DocumentMatch) Pipeline {
 }
 
 func addFacetRequests(request *bleve.SearchRequest) {
-	request.AddFacet("Status", bleve.NewFacetRequest("Status", 3))
+	request.AddFacet("Status", bleve.NewFacetRequest("Status", 4))
 	request.AddFacet("Repository", bleve.NewFacetRequest("Repository", 3))
 	request.AddFacet("Author", bleve.NewFacetRequest("Author", 3))
 	durationFacet := bleve.NewFacetRequest("Duration", 4)

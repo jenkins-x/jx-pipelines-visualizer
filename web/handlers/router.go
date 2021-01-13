@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
+	"github.com/jenkins-x/jx-pipelines-visualizer/internal/version"
 	"github.com/jenkins-x/jx-pipelines-visualizer/web/handlers/functions"
 
 	"github.com/Masterminds/sprig/v3"
@@ -37,7 +38,7 @@ func (r Router) Handler() (http.Handler, error) {
 	r.render = render.New(render.Options{
 		Directory:     "web/templates",
 		Layout:        "layout",
-		IsDevelopment: true,
+		IsDevelopment: version.Version == "dev",
 		Funcs: []htmltemplate.FuncMap{
 			sprig.HtmlFuncMap(),
 			htmltemplate.FuncMap{
@@ -48,6 +49,7 @@ func (r Router) Handler() (http.Handler, error) {
 				"vdate":                  functions.VDate,
 				"sortPipelineCounts":     functions.SortPipelineCounts,
 				"isAvailable":            functions.IsAvailable,
+				"appVersion":             functions.AppVersion,
 			},
 		},
 	})

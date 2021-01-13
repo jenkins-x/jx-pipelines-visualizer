@@ -41,6 +41,9 @@ BUILDFLAGS :=  -ldflags \
 		-X $(ROOT_PACKAGE)/pkg/version.Branch='$(BRANCH)'\
 		-X $(ROOT_PACKAGE)/pkg/version.BuildDate='$(BUILD_DATE)'\
 		-X $(ROOT_PACKAGE)/pkg/version.GoVersion='$(GO_VERSION)'\
+		-X github.com/jenkins-x/jx-pipelines-visualizer/internal/version.Version=$(VERSION)\
+		-X github.com/jenkins-x/jx-pipelines-visualizer/internal/version.Revision='$(REV)'\
+		-X github.com/jenkins-x/jx-pipelines-visualizer/internal/version.Date='$(BUILD_DATE)'\
 		$(BUILD_TIME_CONFIG_FLAGS)"
 
 # Some tests expect default values for version.*, so just use the config package values there.

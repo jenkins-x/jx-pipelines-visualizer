@@ -1,5 +1,5 @@
 {{ define "css-archived_logs" }}
-    <link rel="stylesheet" href="/static/pipeline/main.css">
+    <link rel="stylesheet" href="/static/pipeline/main.css?v={{ appVersion }}">
 {{ end }}
 
 {{ define "js-archived_logs" }}
@@ -8,7 +8,7 @@
     LOGS_URL = "/{{.Owner}}/{{.Repository}}/{{.Branch}}/{{.Build}}";
 </script>
 <script src="/static/lib/ansi_up.js" type="text/javascript" defer></script>
-<script src="/static/pipeline/index.js" type="text/javascript" defer></script>
+<script src="/static/pipeline/index.js?v={{ appVersion }}" type="text/javascript" defer></script>
 {{ end }}
 
 {{ define "header-archived_logs" }}
