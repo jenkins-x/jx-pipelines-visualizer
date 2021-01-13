@@ -45,6 +45,7 @@ func (r Router) Handler() (http.Handler, error) {
 				"pipelinePullRequestURL": functions.PipelinePullRequestURL,
 				"repositoryURL":          functions.RepositoryURL,
 				"branchURL":              functions.BranchURL,
+				"commitURL":              functions.CommitURL,
 				"authorURL":              functions.AuthorURL,
 				"vdate":                  functions.VDate,
 				"sortPipelineCounts":     functions.SortPipelineCounts,
@@ -116,6 +117,15 @@ func (r Router) Handler() (http.Handler, error) {
 		PAInterface:                r.PAInterface,
 		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
 		BuildLogsURLTemplate:       archivedLogsURLTemplate,
+		Render:                     r.render,
+		Logger:                     r.Logger,
+	})
+
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}.yaml", &PipelineHandler{
+		PAInterface:                r.PAInterface,
+		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
+		BuildLogsURLTemplate:       archivedLogsURLTemplate,
+		RenderYAML:                 true,
 		Render:                     r.render,
 		Logger:                     r.Logger,
 	})

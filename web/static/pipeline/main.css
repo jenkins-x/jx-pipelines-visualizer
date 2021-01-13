@@ -135,6 +135,19 @@
     background: var(--color-background);
 }
 
+.pipeline-card ul li span.title {
+    display: inline-block;
+    width: 60px;
+}
+
+.pipeline-card ul.stages {
+    list-style-type: decimal;
+}
+
+.pipeline-card a img.author-avatar {
+    margin-right: 5px;
+}
+
 .stage .stage-name {
     font-weight: bold;
 }
