@@ -10,6 +10,7 @@ import (
 
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 	"github.com/jenkins-x/jx-pipelines-visualizer/internal/kube"
+	"github.com/jenkins-x/jx-pipelines-visualizer/internal/version"
 	"github.com/jenkins-x/jx-pipelines-visualizer/web/handlers"
 
 	jxclientset "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
@@ -27,11 +28,6 @@ var (
 		logLevel                     string
 		printVersion                 bool
 	}
-
-	// these are set at compile time by GoReleaser through LD Flags
-	version  = "dev"
-	revision = "unknown"
-	date     = "now"
 )
 
 func init() {
@@ -49,7 +45,7 @@ func main() {
 	flag.Parse()
 
 	if options.printVersion {
-		fmt.Printf("Version %s - Revision %s - Date %s", version, revision, date)
+		fmt.Printf("Version %s - Revision %s - Date %s", version.Version, version.Revision, version.Date)
 		return
 	}
 
