@@ -31,6 +31,15 @@ func BranchURL(pipeline interface{}) string {
 	}
 }
 
+func CommitURL(pipeline interface{}) string {
+	switch p := pipeline.(type) {
+	case *jenkinsv1.PipelineActivity:
+		return commitURLForPipelineActivity(p)
+	default:
+		return ""
+	}
+}
+
 func AuthorURL(pipeline interface{}) string {
 	switch p := pipeline.(type) {
 	case visualizer.Pipeline:
@@ -97,6 +106,18 @@ func branchURLForPipelineActivity(pa *jenkinsv1.PipelineActivity) string {
 			return fmt.Sprintf("https://github.com/%s/%s/pull/%s", pa.Spec.GitOwner, pa.Spec.GitRepository, strings.TrimPrefix(pa.Spec.GitBranch, "PR-"))
 		}
 		return fmt.Sprintf("https://github.com/%s/%s/tree/%s", pa.Spec.GitOwner, pa.Spec.GitRepository, pa.Spec.GitBranch)
+	default:
+		return ""
+	}
+}
+
+func commitURLForPipelineActivity(pa *jenkinsv1.PipelineActivity) string {
+	if len(pa.Spec.LastCommitURL) > 0 {
+		return pa.Spec.LastCommitURL
+	}
+	switch pipelineActivityProvider(pa) {
+	case "github":
+		return fmt.Sprintf("https://github.com/%s/%s/commit/%s", pa.Spec.GitOwner, pa.Spec.GitRepository, pa.Spec.LastCommitSHA)
 	default:
 		return ""
 	}

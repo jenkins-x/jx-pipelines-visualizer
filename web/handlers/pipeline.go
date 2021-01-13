@@ -17,12 +17,14 @@ import (
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/cli-runtime/pkg/printers"
 )
 
 type PipelineHandler struct {
 	PAInterface                jxclientv1.PipelineActivityInterface
 	BuildLogsURLTemplate       *template.Template
 	StoredPipelinesURLTemplate *template.Template
+	RenderYAML                 bool
 	Render                     *render.Render
 	Logger                     *logrus.Logger
 }
@@ -64,6 +66,21 @@ func (h *PipelineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"Branch":     branch,
 			"Build":      build,
 		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		return
+	}
+
+	if h.RenderYAML {
+		if pa.APIVersion == "" {
+			pa.APIVersion = "jenkins.io/v1"
+		}
+		if pa.Kind == "" {
+			pa.Kind = "PipelineActivity"
+		}
+		err = new(printers.YAMLPrinter).PrintObj(pa, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

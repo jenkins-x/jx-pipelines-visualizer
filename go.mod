@@ -33,11 +33,13 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.19.3
+	k8s.io/cli-runtime v0.19.2
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 )
 
 replace (
 	github.com/tektoncd/pipeline => github.com/jenkins-x/pipeline v0.0.0-20201002150609-ca0741e5d19a
+	k8s.io/cli-runtime => k8s.io/cli-runtime v0.19.2
 	k8s.io/client-go => k8s.io/client-go v0.19.2
 )
 
