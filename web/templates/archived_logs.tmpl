@@ -6,6 +6,8 @@
 <script type="text/javascript">
     BUILD_LOG_URL = "/{{.Owner}}/{{.Repository}}/{{.Branch}}/{{.Build}}";
     LOGS_URL = "/{{.Owner}}/{{.Repository}}/{{.Branch}}/{{.Build}}";
+    STEPS = {};
+    ARCHIVE = true;
 </script>
 <script src="/static/lib/ansi_up.js" type="text/javascript" defer></script>
 <script src="/static/pipeline/index.js?v={{ appVersion }}" type="text/javascript" defer></script>
@@ -48,6 +50,7 @@
         </div>
         <div class="follow-option"></div>
         <div class="raw-logs-options">
+            <button class="option-button" id="toggle-steps">Toggle Steps</button>
             <a class="option-button" href="/{{.Owner}}/{{.Repository}}/{{.Branch}}/{{.Build}}/logs" target="_blank">View raw logs</a>
             <a class="option-button" id="downloadLogs" disabled="true" download="{{.Owner}}-{{.Repository}}-{{.Branch}}-{{.Build}}.txt">Download raw logs</a>
         </div>

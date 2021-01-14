@@ -141,8 +141,6 @@
     border-right: 1px solid var(--main-color);
 }
 
-
-
 .steps {
     background: var(--color-background);
 }
@@ -210,6 +208,23 @@ tr[data-is-parent-step=true][data-open=true] .log-dropdown-icon::before {
     height: 0;
     overflow: hidden;
     transition: height 0.3s ease;
+}
+
+/* Card Header */
+
+.pipeline-card span.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-header .option-button {
+    padding: 5px;
+    font-size: 14px;
+    line-height: 10px;
+}
+
+.timeline {
+    margin-top: 25px;
 }
 
 /* Sticky header */

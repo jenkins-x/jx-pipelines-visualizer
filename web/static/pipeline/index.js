@@ -224,12 +224,27 @@
         requestAnimationFrame(repeatOften);   
     };
 
+    const showTimeline = () => {
+        const element = document.getElementById('pipeline-timeline')
+        if (element.classList.contains('steps-hidden')) {
+            element.classList.remove('steps-hidden');
+        } else {
+            element.classList.add('steps-hidden');
+        }
+    }
+
+    const addClickShowTimeline = () => document.getElementById('show-timeline').addEventListener('click', showTimeline);
+
 
     // Run
-    addStageStepsLinksEvent();
     addScrollEvent();
     addColorThemeOption();
     addClickEventToStep();
+ 
+    if (!ARCHIVE) {
+        addStageStepsLinksEvent();
+        addClickShowTimeline();
+    }
 
     if (BUILD_LOG_URL) {
         loadByBuildLogUrl();
