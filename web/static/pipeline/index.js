@@ -12,6 +12,12 @@
 
     const cssLineSelected = 'selected-line';
 
+    let currentStep = '';
+    let allIsOpen = false;
+
+    const getAllParentSteps = () => document.querySelectorAll('tr[data-is-parent-step=true]');
+    const getParentStep = name => document.querySelector(`tr[data-step=${name}][data-is-parent-step=true]`);
+
     const addColorThemeOption = () => {
         const themeSwitch = document.querySelector("#theme-switch");
         themeSwitch.addEventListener('click', (e) => {
@@ -31,7 +37,7 @@
     };
 
     const transformLogIntoHtml = (lineNumber, text, type='') => {
-        var containerId = "";
+        let containerId = '';
         if (text.startsWith('Showing logs for build ')) {
             const regex = /\[32m([^\[])+\[0m/g;
             const matches = text.match(regex);
@@ -39,6 +45,7 @@
                 const stage = matches[1].replace('[32m', '').replace('[0m', '').slice(0, -1);
                 const container = matches[2].replace('[32m', '').replace('[0m', '').slice(0, -1);
                 containerId = "log-" + stage + "-" + container;
+                currentStep = stage + "-" + container;
             }
         }
 
@@ -48,8 +55,10 @@
         const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
 
         return `
-        <tr id="logsL${lineNumber}">
+        <tr id="logsL${lineNumber}" data-step=${currentStep} data-is-parent-step=${containerId !== ''} class="step-line-hidden">
             <td class="log-number" data-line-number=${lineNumber}></td>
+            <td class="log-dropdown-icon"></td>
+            <td class="log-timer">${STEPS[containerId] ? STEPS[containerId].timer : ''}</td>
             <td class="log-line" id="${containerId}">
                 <span class="line-text ${type}">${transformedText}</span>
             </td>
@@ -64,6 +73,25 @@
             .map((line, index) => transformLogIntoHtml(givenIndex ? givenIndex() : index+1, line, type))
             .join('\n');
 
+    const toggleStep = (stepElement, toOpen = null) => {
+        const stepName = stepElement.dataset.step;
+
+        if ((stepElement.dataset.open === 'true' && toOpen === null)  || toOpen === false) {
+            stepElement.dataset.open = false;
+            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.add('step-line-hidden'));
+        } else {
+            stepElement.dataset.open = true;
+            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.remove('step-line-hidden'));
+        }
+    }
+    
+    const onClickParentStep = event => toggleStep(event.currentTarget);
+    
+    const toggleAllSteps = () => {
+        allIsOpen = !allIsOpen;
+        getAllParentSteps().forEach(step => toggleStep(step, allIsOpen));
+    }
+
     const onClickLineNumber = event => {
         const elem = event.target;
 
@@ -76,8 +104,7 @@
         elem.parentElement.classList.add(cssLineSelected);
     };
 
-    const addLinks = () => 
-        document.querySelectorAll('.log-number').forEach(elem => elem.addEventListener('click', onClickLineNumber));
+    const addLinks = () => document.querySelectorAll('.log-number').forEach(elem => elem.addEventListener('click', onClickLineNumber));
 
     const goToAnchor = () => {
         if (location.hash) {
@@ -103,29 +130,27 @@
         });
     }
 
-    const addStageStepsLinksEvent = () => {
-        var links = document.querySelectorAll('.stage-steps-link');
+    const addClickEventToStep = () => document.getElementById('toggle-steps').addEventListener('click', toggleAllSteps);
 
-        Array.from(links).forEach(link => {
-            link.addEventListener('click', function(event) {
-                document.querySelector(link.getAttribute('href')).classList.remove('steps-hidden');
+    const addStageStepsLinksEvent = () => {
+        document.querySelectorAll('.stage-steps-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const element = document.querySelector(link.getAttribute('href'));
+                if (element.classList.contains('steps-hidden')) {
+                    document.querySelector(link.getAttribute('href')).classList.remove('steps-hidden');
+                } else {
+                    document.querySelector(link.getAttribute('href')).classList.add('steps-hidden');
+                }
+
             });
         });
-    }
 
-    const addDisplayStepsEvent = () => {
-        if (displayStepsCheckbox) {
-            displayStepsCheckbox.addEventListener('click', function(event) {
-                var stages = document.querySelectorAll('.stage');
-                Array.from(stages).forEach(stage => {
-                    if (displayStepsCheckbox.checked) {
-                        stage.classList.remove('steps-hidden');
-                    } else {
-                        stage.classList.add('steps-hidden');
-                    }
-                });
+        document.querySelectorAll('.link-to-console').forEach(link => {
+            link.addEventListener('click', () => {
+                const stepToOpen = document.querySelector(link.getAttribute('href'));
+                toggleStep(stepToOpen.parentElement, true);
             });
-        }
+        });
     }
 
     const generateDownloadLink = (logs) => {
@@ -141,6 +166,7 @@
             addLinks();
             goToAnchor();
             generateDownloadLink(response);
+            getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
         }).catch((error)=> {
             errors.innerHTML = transformLogsIntoHtml(error, 'line-error');
         });
@@ -163,13 +189,19 @@
 
                 logs.insertAdjacentHTML('beforeend', transformLogsIntoHtml(logsBuffer, '', () => ++lineNumber));
                 addLinks();
+                getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
+                getAllParentSteps().forEach(step => toggleStep(step, false));
+                getParentStep(currentStep).click();
+                
                 if (!getAnchor) {
                     getAnchor = goToAnchor();
                 }
+                
                 if(followLogsCheckbox.checked) {
                     const lastLog = document.getElementById(`logsL${lineNumber}`);
                     lastLog.scrollIntoView({block: 'end', inline: 'end', behavior: 'smooth'});
                 }
+                
                 logsBuffer = "";
             }
             if(!isFinished) {
@@ -195,9 +227,9 @@
 
     // Run
     addStageStepsLinksEvent();
-    addDisplayStepsEvent();
     addScrollEvent();
     addColorThemeOption();
+    addClickEventToStep();
 
     if (BUILD_LOG_URL) {
         loadByBuildLogUrl();
