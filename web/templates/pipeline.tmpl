@@ -196,6 +196,13 @@
                     {{- end -}}
                     {{- end -}}
                 </ul>
+                {{- with pipelinePreviewEnvironmentApplicationURL .Pipeline -}}
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-link">
+                        <a href="{{ . }}">Preview Environment</a>
+                    </button>
+                </div>
+                {{- end -}}
             </div>
         </div>
     </div>

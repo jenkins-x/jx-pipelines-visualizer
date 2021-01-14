@@ -17,3 +17,12 @@ func PipelinePullRequestURL(pa *jenkinsv1.PipelineActivity) string {
 	prURL := fmt.Sprintf("%s/pull/%s", repoURL, prNumber)
 	return prURL
 }
+
+func PipelinePreviewEnvironmentApplicationURL(pa *jenkinsv1.PipelineActivity) string {
+	for _, stage := range pa.Spec.Steps {
+		if stage.Preview != nil && stage.Preview.ApplicationURL != "" {
+			return stage.Preview.ApplicationURL
+		}
+	}
+	return ""
+}
