@@ -149,6 +149,7 @@ func (r Router) Handler() (http.Handler, error) {
 	router.Handle("/namespaces/{namespace}/pipelineruns/{pipelineRun}", &PipelineRunHandler{
 		TektonClient: tknClient,
 		PAInterface:  r.PAInterface,
+		Namespace:    r.Namespace,
 		Store:        r.Store,
 		Render:       r.render,
 		Logger:       r.Logger,
