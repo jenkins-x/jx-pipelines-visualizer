@@ -255,7 +255,7 @@
                     {{end}}
                     <div class="clr-timeline-step-body">
                         <span class="clr-timeline-step-title" title="{{ $pipeStep.Stage.Description }}">
-                            <a class="stage-steps-link" href="#" data-steplink='#steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>{{ $pipeStep.Stage.Name }}</a>
+                            <a class="stage-steps-link" href='#steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>{{ $pipeStep.Stage.Name }}</a>
                         </span>
                         {{- if (eq $pipeStep.Stage.Status "Failed") -}}
                         <span class="clr-timeline-step-description">{{ $pipeStep.Stage.Description }}</span>

@@ -23,12 +23,14 @@
         if (location.hash) {
             const elem = document.querySelector(location.hash);
             if (elem) {
-                // We open the parent before
-                const stepParent = getParentStep(elem.dataset.step);
-                toggleStep(stepParent, true);
-                elem.scrollIntoView({block: 'center', inline: 'center', behavior: 'smooth'});
-                elem.classList.add(cssLineSelected);
-                return true;
+                if(location.hash.includes('logsL')) {
+                    // We open the parent before
+                    const stepParent = getParentStep(elem.dataset.step);
+                    toggleStep(stepParent, true);
+                    elem.scrollIntoView({block: 'center', inline: 'center', behavior: 'smooth'});
+                    elem.classList.add(cssLineSelected);
+                    return true;
+                }
             }
         }
         return false;
@@ -74,13 +76,6 @@
     };
 
     const addStageStepsLinksEvent = () => {
-        document.querySelectorAll('.stage-steps-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const stepLink = link.dataset.steplink;
-                toggleClassName(stepLink, 'steps-hidden');
-            });
-        });
-
         document.querySelectorAll('.link-to-console').forEach(link => {
             link.addEventListener('click', () => {
                 const stepToOpen = document.querySelector(link.getAttribute('href'));
