@@ -4,7 +4,6 @@ This is a Web UI for [Jenkins X](https://jenkins-x.io/), with a clear goal: **vi
 
 See the [announcement blog post](https://jenkins-x.io/blog/2020/09/23/jx-pipelines-visualizer/) for more details and a demo.
 
-
 ## Current Status
 
 This project has been started in September 2020 and shared after a couple of hours of work. It's working - and is deployed and used at [Dailymotion](https://www.dailymotion.com/) - even if the UI is very basic for the moment.
