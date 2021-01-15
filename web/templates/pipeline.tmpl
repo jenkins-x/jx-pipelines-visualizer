@@ -230,6 +230,7 @@
         </div>
     </div>
     <div id="pipeline-timeline" class="steps-hidden">
+        <h3>Pipeline timeline</h3>
         <ul class="clr-timeline timeline">
             {{ range $pipeStep := .Pipeline.Spec.Steps }}
                 {{ if $pipeStep.Stage }}
@@ -267,7 +268,7 @@
         {{- range $pipeStep := .Pipeline.Spec.Steps -}}
             {{- if $pipeStep.Stage -}}
             <div class='{{- if eq $pipeStep.Stage.Name "Meta Pipeline" -}} steps-hidden stage {{ else }} stage {{- end -}}' id='steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>
-                <span class="stage-name">{{ $pipeStep.Stage.Name }}</span>
+                <span class="stage-name">Stage: {{ $pipeStep.Stage.Name }}</span>
                 <ul class="clr-timeline timeline">
                     {{- range $step := $pipeStep.Stage.Steps -}}
                     <li class="clr-timeline-step">
