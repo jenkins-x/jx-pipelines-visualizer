@@ -2,8 +2,8 @@
     --color-background: #ffffff;
     --color-background-darker: #f3f6fa;
     --color-grey: #eaebec;
+   
     --color-error: #ef476f;
-
     --color-pending: #073b4c;
     --color-running: #118ab2;
     --color-success: #06d6a0;
@@ -11,7 +11,9 @@
     --color-warning: #ffd166;
 
     --main-color: #6873f9;
-    --main-color-darker: #040749;
+    --main-color-light: #8E96FC;
+    --main-color-lighter: #ABB1FC;
+    --main-color-darker: #222BA2;
 }
 
 * {
@@ -20,7 +22,7 @@
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
 }
 
 .menu-bar {
@@ -32,7 +34,7 @@ body {
 
 .top-header {
     background-color: var(--color-background);
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
     height: 75px;
     display: flex;
     justify-content: space-between;
@@ -72,6 +74,7 @@ body {
     flex-direction: column;
     padding: 10px 20px 30px;
     justify-content: space-between;
+    background-color: var(--color-background-darker);
 }
 
 .pipeline-card {
@@ -151,6 +154,10 @@ pre#logs {
 .timeline {
     padding-left: 0;
     overflow-x: auto;
+}
+
+.clr-timeline-step {
+    min-width: auto;
 }
 
 .clr-timeline-step clr-icon[shape=success-standard] {

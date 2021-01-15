@@ -5,6 +5,9 @@
     border: 1px solid var(--main-color);
     color: var(--main-color);
     padding: 8px;
+    cursor: pointer;
+    line-height: 16px;
+    background-color: var(--color-background);
 }
 
 .option-button:hover {
@@ -12,6 +15,10 @@
     color: var(--color-background);
     text-decoration: none;
     background-color: var(--main-color);
+}
+
+.option-button:focus {
+    outline: none;
 }
 
 .line-text {
@@ -52,8 +59,7 @@
 }
 
 .log-line {
-    padding-left: 18px;
-    text-indent: -7px;
+    padding-left: 10px;
     position: relative;
     padding-right: 10px;
     line-height: 20px;
@@ -91,12 +97,16 @@
 
 .logs-options > div {
     margin: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .logs-options .color-theme-option {
     width: 90px;
     height: 20px;
     margin-left: 40px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .selected-line .log-number {
@@ -148,13 +158,86 @@
     margin-right: 5px;
 }
 
+.stage {
+    transition: all 0.3s ease;
+    opacity: 1;
+}
+
 .stage .stage-name {
     font-weight: bold;
 }
 
 .steps-hidden {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    display: none;
+}
+
+.step-line-hidden[data-is-parent-step=false] {
     display: none;
     visibility: hidden;
+}
+
+tr[data-is-parent-step=true] {
+    cursor: pointer;
+}
+
+.log-timer {
+    width: 55px;
+    text-align: right;
+    color: var(--main-color-lighter);
+    font-size: 12px;
+}
+
+.log-dropdown-icon {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+    cursor: pointer;
+    user-select: none;
+    width: 15px;
+}
+
+tr[data-is-parent-step=true] .log-dropdown-icon::before,
+tr[data-is-parent-step=true][data-open=false] .log-dropdown-icon::before {
+    content: '+';
+}
+
+tr[data-is-parent-step=true][data-open=true] .log-dropdown-icon::before {
+    content: '-';
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Succeeded]::before {
+    content: '\2713';
+    color: var(--color-success);
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Failed]::before {
+    content: '\2715';
+    color: var(--color-error);
+    font-size: 15px;
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Running] {
+    transform-origin: 50% 50%;
+    animation: rotate 1.5s linear infinite;
+    text-align: center;
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Running]::before {
+    content: '\21BA';
+    color: var(--color-running);
+    font-size: 17px;
+    bottom: 2px;
+    position: relative;
+}
+
+@keyframes rotate {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(-360deg);
+    }
 }
 
 .header-hidden {
@@ -162,6 +245,25 @@
     overflow: hidden;
     transition: height 0.3s ease;
 }
+
+/* Card Header */
+
+.pipeline-card span.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-header .option-button {
+    padding: 5px;
+    font-size: 14px;
+    line-height: 10px;
+}
+
+.timeline {
+    margin-top: 25px;
+}
+
+/* Sticky header */
 
 .sticky-header {
     position: fixed;
