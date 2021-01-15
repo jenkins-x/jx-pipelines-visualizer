@@ -171,6 +171,7 @@
     width: 0;
     height: 0;
     opacity: 0;
+    display: none;
 }
 
 .step-line-hidden[data-is-parent-step=false] {

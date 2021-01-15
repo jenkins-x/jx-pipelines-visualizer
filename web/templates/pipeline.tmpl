@@ -21,6 +21,8 @@
                                 timer: "{{ $step.CompletedTimestamp.Sub $step.StartedTimestamp.Time }}",
                             {{ else if $step.StartedTimestamp }}
                                 timer: "{{ $step.StartedTimestamp.Format "15:04:05" }}",
+                            {{ else }}
+                                timer: '',
                             {{ end }}
                                 status: "{{ $step.Status }}"
                         },

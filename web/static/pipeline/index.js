@@ -137,8 +137,18 @@
         downloadLink.setAttribute("href", downloadUrl);
     };
 
-
     // Fetch + Read + Enhance logs
+
+    const updateStepStatusIcon = () => {
+        const currentRunning = document.querySelector('.log-status-icon[data-status=Running]');
+        if(currentRunning) {
+            const containerId = "log-" + currentRunning.parentElement.dataset.step;
+            currentRunning.dataset.status = STEPS[containerId] ? STEPS[containerId].status : '';
+        }
+        if(currentStep){
+            document.querySelector(`tr[data-step=${currentStep}][data-is-parent-step=true] .log-status-icon`).dataset.status = 'Running';
+        }
+    };
 
     const transformLogIntoHtml = (lineNumber, text, type='') => {
         let containerId = '';
@@ -157,8 +167,6 @@
 
         // Transform url to link element
         const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
-
-        console.log(STEPS, containerId);
 
         return `
         <tr id="logsL${lineNumber}" data-step=${currentStep} data-is-parent-step=${containerId !== ''} class="step-line-hidden">
@@ -219,7 +227,10 @@
                 if(followLogsCheckbox.checked) {
                     const lastLog = document.getElementById(`logsL${lineNumber}`);
                     getAllParentSteps().forEach(step => toggleStep(step, false));
-                    getParentStep(currentStep).click();
+                    // Open current step
+                    toggleStep(getParentStep(currentStep), true);
+                    // Update step status icon
+                    updateStepStatusIcon();
                     lastLog.scrollIntoView({block: 'end', inline: 'end', behavior: 'smooth'});
                 }
                 
