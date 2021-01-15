@@ -4,7 +4,6 @@
     const errors = document.getElementById("errors");
     const downloadLink = document.getElementById("downloadLogs");
 
-    const displayStepsCheckbox = document.querySelector('.display-steps');
     const followLogsCheckbox = document.querySelector('.follow-logs');
     const logsTable = document.querySelector('.logs-table');
     const stickyHeader = document.querySelector('.header-hidden');
@@ -15,8 +14,84 @@
     let currentStep = '';
     let allIsOpen = false;
 
+    // Utils
+
     const getAllParentSteps = () => document.querySelectorAll('tr[data-is-parent-step=true]');
     const getParentStep = name => document.querySelector(`tr[data-step=${name}][data-is-parent-step=true]`);
+
+    const goToAnchor = () => {
+        if (location.hash) {
+            const elem = document.querySelector(location.hash);
+            if (elem) {
+                // We open the parent before
+                const stepParent = getParentStep(elem.dataset.step);
+                toggleStep(stepParent, true);
+                elem.scrollIntoView({block: 'center', inline: 'center', behavior: 'smooth'});
+                elem.classList.add(cssLineSelected);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const toggleClassName = (selector, cssClass) => {
+        const element = document.querySelector(selector);
+        if (element.classList.contains(cssClass)) {
+            element.classList.remove(cssClass);
+        } else {
+            element.classList.add(cssClass);
+        }
+    };
+
+    const toggleStep = (stepElement, toOpen = null) => {
+        const stepName = stepElement.dataset.step;
+
+        if ((stepElement.dataset.open === 'true' && toOpen === null)  || toOpen === false) {
+            stepElement.dataset.open = false;
+            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.add('step-line-hidden'));
+        } else {
+            stepElement.dataset.open = true;
+            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.remove('step-line-hidden'));
+        }
+    };
+
+    // Listeners
+
+    const addClickEventToStep = () => document.getElementById('toggle-steps').addEventListener('click', toggleAllSteps);
+    const addClickShowTimeline = () => document.getElementById('show-timeline').addEventListener('click', showTimeline);
+    const addLinks = () => document.querySelectorAll('.log-number').forEach(elem => elem.addEventListener('click', onClickLineNumber));
+
+    const addScrollEvent = () => {
+        window.addEventListener('scroll', function(e) {
+            if (window.scrollY > 300) {
+                stickyHeader.classList.add('sticky-header');
+                stickyOption.classList.add('sticky-option')
+            } else if (window.scrollY < 300) {
+                stickyHeader.classList.remove('sticky-header');
+                stickyOption.classList.remove('sticky-option')
+            }
+        });
+    };
+
+    const addStageStepsLinksEvent = () => {
+        document.querySelectorAll('.stage-steps-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const stepLink = link.dataset.steplink;
+                toggleClassName(stepLink, 'steps-hidden');
+            });
+        });
+
+        document.querySelectorAll('.link-to-console').forEach(link => {
+            link.addEventListener('click', () => {
+                const stepToOpen = document.querySelector(link.getAttribute('href'));
+                toggleStep(stepToOpen.parentElement, true);
+            });
+        });
+    };
+
+    // Options
+
+    const showTimeline = () => toggleClassName('#pipeline-timeline', 'steps-hidden');
 
     const addColorThemeOption = () => {
         const themeSwitch = document.querySelector("#theme-switch");
@@ -36,6 +111,35 @@
         }
     };
 
+    const onClickParentStep = event => toggleStep(event.currentTarget);
+    
+    const onClickLineNumber = event => {
+        const elem = event.target;
+
+        if (location.hash) {
+            const previousClicked = document.querySelector(location.hash);
+            previousClicked.classList.remove(cssLineSelected);
+        }
+
+        history.pushState(null, null, `#logsL${elem.dataset.lineNumber}`);
+        elem.parentElement.classList.add(cssLineSelected);
+    };
+
+    const toggleAllSteps = () => {
+        allIsOpen = !allIsOpen;
+        getAllParentSteps().forEach(step => toggleStep(step, allIsOpen));
+    };
+
+    const generateDownloadLink = (logs) => {
+        var blob = new Blob([logs], { type : "text/plain;charset=utf-8"});
+        downloadUrl = URL.createObjectURL(blob);
+
+        downloadLink.setAttribute("href", downloadUrl);
+    };
+
+
+    // Fetch + Read + Enhance logs
+
     const transformLogIntoHtml = (lineNumber, text, type='') => {
         let containerId = '';
         if (text.startsWith('Showing logs for build ')) {
@@ -54,10 +158,13 @@
         // Transform url to link element
         const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
 
+        console.log(STEPS, containerId);
+
         return `
         <tr id="logsL${lineNumber}" data-step=${currentStep} data-is-parent-step=${containerId !== ''} class="step-line-hidden">
             <td class="log-number" data-line-number=${lineNumber}></td>
             <td class="log-dropdown-icon"></td>
+            <td class="log-status-icon" data-status=${STEPS[containerId] ? STEPS[containerId].status : ''}></td>
             <td class="log-timer">${STEPS[containerId] ? STEPS[containerId].timer : ''}</td>
             <td class="log-line" id="${containerId}">
                 <span class="line-text ${type}">${transformedText}</span>
@@ -73,93 +180,6 @@
             .map((line, index) => transformLogIntoHtml(givenIndex ? givenIndex() : index+1, line, type))
             .join('\n');
 
-    const toggleStep = (stepElement, toOpen = null) => {
-        const stepName = stepElement.dataset.step;
-
-        if ((stepElement.dataset.open === 'true' && toOpen === null)  || toOpen === false) {
-            stepElement.dataset.open = false;
-            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.add('step-line-hidden'));
-        } else {
-            stepElement.dataset.open = true;
-            document.querySelectorAll(`tr[data-step=${stepName}]`).forEach(childStep => childStep.classList.remove('step-line-hidden'));
-        }
-    }
-    
-    const onClickParentStep = event => toggleStep(event.currentTarget);
-    
-    const toggleAllSteps = () => {
-        allIsOpen = !allIsOpen;
-        getAllParentSteps().forEach(step => toggleStep(step, allIsOpen));
-    }
-
-    const onClickLineNumber = event => {
-        const elem = event.target;
-
-        if (location.hash) {
-            const previousClicked = document.querySelector(location.hash);
-            previousClicked.classList.remove(cssLineSelected);
-        }
-
-        history.pushState(null, null, `#logsL${elem.dataset.lineNumber}`);
-        elem.parentElement.classList.add(cssLineSelected);
-    };
-
-    const addLinks = () => document.querySelectorAll('.log-number').forEach(elem => elem.addEventListener('click', onClickLineNumber));
-
-    const goToAnchor = () => {
-        if (location.hash) {
-            const elem = document.querySelector(location.hash);
-            if (elem) {
-                elem.scrollIntoView({block: 'center', inline: 'center', behavior: 'smooth'});
-                elem.classList.add(cssLineSelected);
-                return true;
-            }
-        }
-        return false;
-    };
-
-    const addScrollEvent = () => {
-        window.addEventListener('scroll', function(e) {
-            if (window.scrollY > 300) {
-                stickyHeader.classList.add('sticky-header');
-                stickyOption.classList.add('sticky-option')
-            } else if (window.scrollY < 300) {
-                stickyHeader.classList.remove('sticky-header');
-                stickyOption.classList.remove('sticky-option')
-            }
-        });
-    }
-
-    const addClickEventToStep = () => document.getElementById('toggle-steps').addEventListener('click', toggleAllSteps);
-
-    const addStageStepsLinksEvent = () => {
-        document.querySelectorAll('.stage-steps-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const element = document.querySelector(link.getAttribute('href'));
-                if (element.classList.contains('steps-hidden')) {
-                    document.querySelector(link.getAttribute('href')).classList.remove('steps-hidden');
-                } else {
-                    document.querySelector(link.getAttribute('href')).classList.add('steps-hidden');
-                }
-
-            });
-        });
-
-        document.querySelectorAll('.link-to-console').forEach(link => {
-            link.addEventListener('click', () => {
-                const stepToOpen = document.querySelector(link.getAttribute('href'));
-                toggleStep(stepToOpen.parentElement, true);
-            });
-        });
-    }
-
-    const generateDownloadLink = (logs) => {
-        var blob = new Blob([logs], { type : "text/plain;charset=utf-8"});
-        downloadUrl = URL.createObjectURL(blob);
-
-        downloadLink.setAttribute("href", downloadUrl);
-    }
-
     const loadByBuildLogUrl = () => {
         fetch(`${LOGS_URL}/logs`).then(response => response.text()).then((response) => {
             logs.innerHTML = transformLogsIntoHtml(response);
@@ -168,6 +188,7 @@
             generateDownloadLink(response);
             getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
         }).catch((error)=> {
+            console.error(error);
             errors.innerHTML = transformLogsIntoHtml(error, 'line-error');
         });
     };
@@ -190,8 +211,6 @@
                 logs.insertAdjacentHTML('beforeend', transformLogsIntoHtml(logsBuffer, '', () => ++lineNumber));
                 addLinks();
                 getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
-                getAllParentSteps().forEach(step => toggleStep(step, false));
-                getParentStep(currentStep).click();
                 
                 if (!getAnchor) {
                     getAnchor = goToAnchor();
@@ -199,6 +218,8 @@
                 
                 if(followLogsCheckbox.checked) {
                     const lastLog = document.getElementById(`logsL${lineNumber}`);
+                    getAllParentSteps().forEach(step => toggleStep(step, false));
+                    getParentStep(currentStep).click();
                     lastLog.scrollIntoView({block: 'end', inline: 'end', behavior: 'smooth'});
                 }
                 
@@ -224,31 +245,25 @@
         requestAnimationFrame(repeatOften);   
     };
 
-    const showTimeline = () => {
-        const element = document.getElementById('pipeline-timeline')
-        if (element.classList.contains('steps-hidden')) {
-            element.classList.remove('steps-hidden');
+    // Init
+
+    const init = () => {
+        addScrollEvent();
+        addColorThemeOption();
+        addClickEventToStep();
+     
+        if (!ARCHIVE) {
+            addStageStepsLinksEvent();
+            addClickShowTimeline();
+        }
+    
+        if (BUILD_LOG_URL) {
+            loadByBuildLogUrl();
         } else {
-            element.classList.add('steps-hidden');
+            loadByEventSource();
         }
     }
 
-    const addClickShowTimeline = () => document.getElementById('show-timeline').addEventListener('click', showTimeline);
-
-
     // Run
-    addScrollEvent();
-    addColorThemeOption();
-    addClickEventToStep();
- 
-    if (!ARCHIVE) {
-        addStageStepsLinksEvent();
-        addClickShowTimeline();
-    }
-
-    if (BUILD_LOG_URL) {
-        loadByBuildLogUrl();
-    } else {
-        loadByEventSource();
-    }
+   init();
 })();

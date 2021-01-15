@@ -186,6 +186,7 @@ tr[data-is-parent-step=true] {
     width: 55px;
     text-align: right;
     color: var(--main-color-lighter);
+    font-size: 12px;
 }
 
 .log-dropdown-icon {
@@ -202,6 +203,40 @@ tr[data-is-parent-step=true][data-open=false] .log-dropdown-icon::before {
 
 tr[data-is-parent-step=true][data-open=true] .log-dropdown-icon::before {
     content: '-';
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Succeeded]::before {
+    content: '\2713';
+    color: var(--color-success);
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Failed]::before {
+    content: '\2715';
+    color: var(--color-error);
+    font-size: 15px;
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Running] {
+    transform-origin: 50% 50%;
+    animation: rotate 1.5s linear infinite;
+    text-align: center;
+}
+
+tr[data-is-parent-step=true] .log-status-icon[data-status=Running]::before {
+    content: '\21BA';
+    color: var(--color-running);
+    font-size: 17px;
+    bottom: 2px;
+    position: relative;
+}
+
+@keyframes rotate {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(-360deg);
+    }
 }
 
 .header-hidden {

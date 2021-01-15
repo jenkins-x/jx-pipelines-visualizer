@@ -18,10 +18,11 @@
                             ["log-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}-step-{{ $step.Name | lower | replace " " "-" }}"]: {
                         {{- end -}}
                             {{- if and $step.StartedTimestamp $step.CompletedTimestamp }}
-                                timer: "{{ $step.CompletedTimestamp.Sub $step.StartedTimestamp.Time }}"
+                                timer: "{{ $step.CompletedTimestamp.Sub $step.StartedTimestamp.Time }}",
                             {{ else if $step.StartedTimestamp }}
-                                timer: "{{ $step.StartedTimestamp.Format "15:04:05" }}"
+                                timer: "{{ $step.StartedTimestamp.Format "15:04:05" }}",
                             {{ end }}
+                                status: "{{ $step.Status }}"
                         },
                     {{- end -}}
                 {{- end -}}
@@ -91,8 +92,7 @@
         </div>
         <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
             <div class="card pipeline-card">
-                <span class="title card-header">Status<button class="option-button" id="show-timeline">Show Timeline</button>
-                </span>
+                <span class="title card-header">Status</span>
                 <ul class="card-block">
                     <li>
                         <span class="title">Status</span>
@@ -197,7 +197,7 @@
         </div>
         <div class="clr-col-12 clr-col-sm-6 clr-col-md-6 clr-col-lg-3 clr-col-xl-3">
             <div class="card pipeline-card">
-                <span class="title card-header">Stages</span>
+                <span class="title card-header">Stages <button class="option-button" id="show-timeline">Show Timeline</button></span>
                 <ul class="card-block stages">
                     {{- range .Pipeline.Spec.Steps -}}
                     {{- if .Stage -}}
@@ -252,7 +252,7 @@
                     {{end}}
                     <div class="clr-timeline-step-body">
                         <span class="clr-timeline-step-title" title="{{ $pipeStep.Stage.Description }}">
-                            <a class="stage-steps-link" href='#steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>{{ $pipeStep.Stage.Name }}</a>
+                            <a class="stage-steps-link" href="#" data-steplink='#steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>{{ $pipeStep.Stage.Name }}</a>
                         </span>
                         {{- if (eq $pipeStep.Stage.Status "Failed") -}}
                         <span class="clr-timeline-step-description">{{ $pipeStep.Stage.Description }}</span>
@@ -264,7 +264,7 @@
         </ul>
         {{- range $pipeStep := .Pipeline.Spec.Steps -}}
             {{- if $pipeStep.Stage -}}
-            <div class="stage steps-hidden" id='steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>
+            <div class='{{- if eq $pipeStep.Stage.Name "Meta Pipeline" -}} steps-hidden stage {{ else }} stage {{- end -}}' id='steps-{{ $pipeStep.Stage.Name | lower | replace " " "-" }}'>
                 <span class="stage-name">{{ $pipeStep.Stage.Name }}</span>
                 <ul class="clr-timeline timeline">
                     {{- range $step := $pipeStep.Stage.Steps -}}
@@ -321,7 +321,7 @@
         </div>
         <div class="raw-logs-options">
             <button class="option-button" id="toggle-steps">Toggle Steps</button>
-            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
+            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
             <a class="option-button" id="downloadLogs" download="{{.Pipeline.Spec.GitOwner}}-{{.Pipeline.Spec.GitRepository}}-{{.Pipeline.Spec.GitBranch}}-{{.Pipeline.Spec.Build}}.txt">Download raw logs</a>
         </div>
     </div>

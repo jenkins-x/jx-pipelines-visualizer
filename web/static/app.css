@@ -2,8 +2,8 @@
     --color-background: #ffffff;
     --color-background-darker: #f3f6fa;
     --color-grey: #eaebec;
+   
     --color-error: #ef476f;
-
     --color-pending: #073b4c;
     --color-running: #118ab2;
     --color-success: #06d6a0;
@@ -22,7 +22,7 @@
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
 }
 
 .menu-bar {
@@ -34,7 +34,7 @@ body {
 
 .top-header {
     background-color: var(--color-background);
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
     height: 75px;
     display: flex;
     justify-content: space-between;
