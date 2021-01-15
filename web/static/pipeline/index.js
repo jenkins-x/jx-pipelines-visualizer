@@ -76,6 +76,11 @@
     };
 
     const addStageStepsLinksEvent = () => {
+        const openShowTimeline = () => {
+            document.querySelector('#pipeline-timeline').classList.remove('steps-hidden');
+        };
+        document.querySelectorAll('.stages .stage-steps-link').forEach(link => link.addEventListener('click', openShowTimeline));
+
         document.querySelectorAll('.link-to-console').forEach(link => {
             link.addEventListener('click', () => {
                 const stepToOpen = document.querySelector(link.getAttribute('href'));
