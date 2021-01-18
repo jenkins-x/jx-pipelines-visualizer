@@ -2,51 +2,50 @@
 
 This is a Web UI for [Jenkins X](https://jenkins-x.io/), with a clear goal: **visualize the pipelines - and their logs**.
 
-See the [announcement blog post](https://jenkins-x.io/blog/2020/09/23/jx-pipelines-visualizer/) for more details and a demo.
-
-## Current Status
-
-This project has been started in September 2020 and shared after a couple of hours of work. It's working - and is deployed and used at [Dailymotion](https://www.dailymotion.com/) - even if the UI is very basic for the moment.
-
-Note that it is being used on GKE with logs stored in a GCS bucket.
-
-### Roadmap
-
-- Improve the UI: visualize the pipeline (stages/steps), group logs per stage/step, and so on
-- Split the API and the UI, to make it easier to iterate on the UI
+![Pipeline View](docs/screenshots/pipeline-success.png)
 
 ## Features
 
-- very simple
-- very fast: get your logs in milliseconds, not seconds. Yes, I'm looking at you, JXUI.
-- either retrieve the build logs from the persistent storage (tested with GCS), or stream them from the running pods if the pipeline is still running.
-- retrieve the build logs even for the garbage-collected pipelines (the JXUI just returns 404)
-- read-only. Only requires READ permissions on the JX and Tekton Pipelines CRDs
-- URLs backward-compatible with JXUI - so that you can easily swap the JXUI URL for the jx-pipelines-visualizer one in the Lighthouse config, and have Lighthouse set links to jx-pipelines-visualizer in GitHub Pull Requests.
+- View the pipelines information: metadata, status, stages and steps with timing
+- View the pipelines logs in real-time
+- Retrieve the archived pipelines logs from the long-term storage (GCS, S3, ...)
+- View all pipelines with their status, and filter/sort them
+- Read-only: only requires READ permissions on the Jenkins X and Tekton Pipelines CRDs
+- Backward-compatible URLs with the old "JX UI" - so that you can easily swap the JXUI URL for the jx-pipelines-visualizer one in the Lighthouse config, and have Lighthouse set links to jx-pipelines-visualizer in GitHub Pull Requests.
+
+### Screenshots
+
+![Pipeline with timeline](docs/screenshots/pipeline-success-with-timeline.png)
+
+![Home](docs/screenshots/home.png)
+
+You can also see the [announcement blog post](https://jenkins-x.io/blog/2020/09/23/jx-pipelines-visualizer/) for more details and a demo.
 
 ### Out of scope
 
-- Auth - use a reverse-proxy in front or anything else to handle it
-  - for example [Vouch and Okta](https://medium.com/@vbehar/how-to-protect-a-kubernetes-ingress-behind-okta-with-nginx-91e279e06009)
-  - or [dex](https://github.com/dexidp/dex), [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy), ...
-  - or [nginx basic-auth](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - if you are using the nginx ingress controller
-- Create/Update/Delete operations. It is meant to be a read-only web UI
-- Anything in JX which is not related to the pipelines
+There are a number of features we don't want to include in this project - at least for the moment:
+
+- Everything Auth-related
+  - use a reverse-proxy in front or anything else to handle it
+    - for example [Vouch and Okta](https://medium.com/@vbehar/how-to-protect-a-kubernetes-ingress-behind-okta-with-nginx-91e279e06009)
+    - or [dex](https://github.com/dexidp/dex), [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy), ...
+    - or [nginx basic-auth](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#authentication) - if you are using the nginx ingress controller
+- Create/Update/Delete operations
+  - it is meant to be a read-only web UI
+  - you can use the Octant-based UI for these use-cases.
+- Anything in Jenkins X which is not related to the pipelines
+  - such as managing repositories, environments, and so on.
+  - you can use the Octant-based UI for these use-cases.
 
 ## Installation
 
 ### With Jenkins X v3
 
-It's already installed by default with Jenkins X v3. If its not (e.g. you have an older git repository) - add the following to your `helmfile.yaml` file in the `releases:` section:
+It's already installed by default with Jenkins X v3.
 
-```yaml
-releases:
-- chart: jx3/jx-pipelines-visualizer
-```
+By default an ingress is created to access the UI using basic authentication. See the [documentation for how to access it](https://jenkins-x.io/v3/develop/ui/dashboard/#accessing-the-pipelines-visualizer)
 
-By default an ingress is created to access the UI using basic authentication. See the [documentation for how to access it](https://jenkins-x.io/docs/v3/guides/ui/#pipeline-visualizer)
-
-You can see the default values here: <https://github.com/jenkins-x/jxr-versions/tree/master/charts/jx3/jx-pipelines-visualizer>
+You can see the default values here: <https://github.com/jenkins-x/jx3-versions/tree/master/charts/jx3/jx-pipelines-visualizer>
 
 ### With Jenkins X v2
 
