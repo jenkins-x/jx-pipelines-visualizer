@@ -135,4 +135,3 @@ It uses part of jx code to retrieve the build logs - mainly the part to stream t
 ## Credits
 
 Thanks to [Dailymotion](https://www.dailymotion.com/) for creating the [original repository](https://github.com/dailymotion/jx-pipelines-visualizer) and then donate it to the Jenkins X project.
-
