@@ -2,6 +2,7 @@ package visualizer
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
@@ -33,22 +34,7 @@ func (i *Informer) Start(ctx context.Context) {
 				return
 			}
 
-			// don't index (static) Jenkins PipelineActivity
-			if _, found := GetContext(pa); !found {
-				if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
-					i.Logger.WithField("PipelineActivity", pa.Name).Debug("Ignoring PipelineActivity without context")
-				}
-				return
-			}
-
-			if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
-				i.Logger.WithField("PipelineActivity", pa.Name).Debug("Indexing new PipelineActivity")
-			}
-			p := PipelineFromPipelineActivity(pa)
-			err := i.Store.Add(p)
-			if err != nil && i.Logger != nil {
-				i.Logger.WithError(err).WithField("PipelineActivity", pa.Name).Error("failed to index new PipelineActivity")
-			}
+			i.indexPipelineActivity(pa, "index")
 		},
 		UpdateFunc: func(old, new interface{}) {
 			pa, ok := new.(*jenkinsv1.PipelineActivity)
@@ -56,22 +42,7 @@ func (i *Informer) Start(ctx context.Context) {
 				return
 			}
 
-			// don't index (static) Jenkins PipelineActivity
-			if _, found := GetContext(pa); !found {
-				if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
-					i.Logger.WithField("PipelineActivity", pa.Name).Debug("Ignoring PipelineActivity without context")
-				}
-				return
-			}
-
-			if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
-				i.Logger.WithField("PipelineActivity", pa.Name).Debug("Re-indexing PipelineActivity")
-			}
-			p := PipelineFromPipelineActivity(pa)
-			err := i.Store.Add(p)
-			if err != nil && i.Logger != nil {
-				i.Logger.WithError(err).WithField("PipelineActivity", pa.Name).Error("failed to re-index PipelineActivity")
-			}
+			i.indexPipelineActivity(pa, "re-index")
 		},
 		DeleteFunc: func(obj interface{}) {
 			pa, ok := obj.(*jenkinsv1.PipelineActivity)
@@ -92,16 +63,32 @@ func (i *Informer) Start(ctx context.Context) {
 	informerFactory.Start(ctx.Done())
 }
 
-// GetContext returns the pipeline context using the v2 or v3 labels
-func GetContext(pa *jenkinsv1.PipelineActivity) (string, bool) {
-	if pa.Spec.Context != "" {
-		return pa.Spec.Context, true
-	}
-	for _, label := range []string{"context", "lighthouse.jenkins-x.io/context"} {
-		answer := pa.Labels[label]
-		if answer != "" {
-			return answer, true
+func (i *Informer) indexPipelineActivity(pa *jenkinsv1.PipelineActivity, operation string) {
+	if isJenkinsPipelineActivity(pa) {
+		if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
+			i.Logger.WithField("PipelineActivity", pa.Name).Debug("Ignoring PipelineActivity created by Jenkins")
 		}
+		return
 	}
-	return "", false
+
+	if i.Logger != nil && i.Logger.IsLevelEnabled(logrus.DebugLevel) {
+		i.Logger.WithField("PipelineActivity", pa.Name).Debugf("%sing new PipelineActivity", strings.Title(operation))
+	}
+	p := PipelineFromPipelineActivity(pa)
+	err := i.Store.Add(p)
+	if err != nil && i.Logger != nil {
+		i.Logger.WithError(err).WithField("PipelineActivity", pa.Name).Errorf("failed to %s new PipelineActivity", operation)
+	}
+}
+
+// isJenkinsPipelineActivity returns true if the given PipelineActivity has been created by Jenkins
+// see https://github.com/jenkinsci/jx-resources-plugin/blob/master/src/main/java/org/jenkinsci/plugins/jx/resources/BuildSyncRunListener.java#L106
+func isJenkinsPipelineActivity(pa *jenkinsv1.PipelineActivity) bool {
+	if strings.Contains(pa.Spec.BuildURL, "/blue/organizations/jenkins/") {
+		return true
+	}
+	if strings.Contains(pa.Spec.BuildLogsURL, "/job/") && strings.HasSuffix(pa.Spec.BuildLogsURL, "/console") {
+		return true
+	}
+	return false
 }

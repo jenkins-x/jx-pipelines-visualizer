@@ -40,7 +40,7 @@ func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 		Repository:      pa.Spec.GitRepository,
 		Branch:          pa.Spec.GitBranch,
 		Build:           pa.Spec.Build,
-		Context:         pa.Spec.Context,
+		Context:         getContext(pa),
 		Author:          pa.Spec.Author,
 		AuthorAvatarURL: pa.Spec.AuthorAvatarURL,
 		Commit:          pa.Spec.LastCommitSHA,
@@ -59,4 +59,16 @@ func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 		p.Duration = p.End.Sub(p.Start)
 	}
 	return p
+}
+
+func getContext(pa *jenkinsv1.PipelineActivity) string {
+	if pa.Spec.Context != "" {
+		return pa.Spec.Context
+	}
+	for _, label := range []string{"context", "lighthouse.jenkins-x.io/context"} {
+		if pipelineContext, found := pa.Labels[label]; found {
+			return pipelineContext
+		}
+	}
+	return ""
 }
