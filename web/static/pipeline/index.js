@@ -1,7 +1,6 @@
 (function(){
     const ansi_up = new AnsiUp;
     const logs = document.getElementById("logs");
-    const errors = document.getElementById("errors");
     const downloadLink = document.getElementById("downloadLogs");
 
     const followLogsCheckbox = document.querySelector('.follow-logs');
@@ -197,7 +196,7 @@
             getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
         }).catch((error)=> {
             console.error(error);
-            errors.innerHTML = transformLogsIntoHtml(error, 'line-error');
+            logs.innerHTML = transformLogsIntoHtml(error, 'line-error');
         });
     };
 
@@ -245,7 +244,7 @@
             logsBuffer += e.data + "\n";
         }, {passive: true});
         eventSource.addEventListener("error", function(e) {
-            errors.innerHTML = transformLogsIntoHtml(e.data, 'line-error');
+            logs.innerHTML = transformLogIntoHtml(0, e.data, 'line-error');
         });
         eventSource.addEventListener("EOF", function(e) {
             eventSource.close();
