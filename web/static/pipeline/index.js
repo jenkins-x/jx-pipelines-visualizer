@@ -188,15 +188,22 @@
             .join('\n');
 
     const loadByBuildLogUrl = () => {
-        fetch(`${LOGS_URL}/logs`).then(response => response.text()).then((response) => {
+        fetch(`${LOGS_URL}/logs`).then((response) => {
+            if (response.status == 404) {
+                throw new Error('Archived logs not found in the long term storage');
+            }
+            if (!response.ok) {
+                throw new Error('Failed to retrieve the archived logs from the long term storage: ' + response.status + ' ' + response.statusText);
+            }
+            return response.text();
+        }).then((response) => {
             logs.innerHTML = transformLogsIntoHtml(response);
             addLinks();
             goToAnchor();
             generateDownloadLink(response);
             getAllParentSteps().forEach(parentStep => parentStep.addEventListener('click', onClickParentStep));
-        }).catch((error)=> {
-            console.error(error);
-            logs.innerHTML = transformLogsIntoHtml(error, 'line-error');
+        }).catch((error) => {
+            logs.innerHTML = transformLogIntoHtml(0, error.toString(), 'line-error');
         });
     };
 
