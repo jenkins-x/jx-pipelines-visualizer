@@ -328,13 +328,6 @@
             <a class="option-button" id="downloadLogs" download="{{.Pipeline.Spec.GitOwner}}-{{.Pipeline.Spec.GitRepository}}-{{.Pipeline.Spec.GitBranch}}-{{.Pipeline.Spec.Build}}.txt">Download raw logs</a>
         </div>
     </div>
-    <table class="error-logs-table">
-        <colgroup>
-            <col width="40">
-            <col>
-        </colgroup>
-        <tbody id="errors"></tbody>
-    </table>
     <table class="logs-table">
         <colgroup>
             <col width="40">
@@ -344,7 +337,7 @@
             <tr>
                 <td></td>
                 <td class="log-line">
-                    <span class="line-text">Please wait while we get logs...</span>
+                    <span class="line-text">Loading the logs...</span>
                 </td>
             </tr>
         </tbody>
