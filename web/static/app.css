@@ -137,12 +137,18 @@ pre#logs {
     color: var(--color-pending);
 }
 
-.pipeline-metadata {
-    margin: auto;
+.header-metadata {
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 10px;
 }
 
-.pipeline-metadata span {
+.header-metadata span {
     margin: 2px;
+}
+.header-metadata span .icon {
+    color: var(--color-running);
 }
 
 .owner-img {
@@ -179,7 +185,7 @@ footer {
 }
 
 @media (max-width: 600px) {
-    .pipeline-metadata {
+    .header-metadata {
         display: none;
     }
 

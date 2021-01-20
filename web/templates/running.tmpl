@@ -1,0 +1,59 @@
+{{ define "css-running" }}
+    <link href="/static/lib/clr-icons.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css" integrity="sha512-1k7mWiTNoyx2XtmI96o+hdjP8nn0f3Z2N4oF/9ZZRgijyV4omsKOXEnqL1gKQNPy2MTSP9rIEWGcH/CInulptA==" crossorigin="anonymous" type="text/css" rel="stylesheet" />
+{{ end }}
+
+{{ define "js-running" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" type="text/javascript" defer></script>
+<script src="/static/lib/clr-icons.min.js" type="text/javascript" defer></script>
+<script src="/static/running/index.js?v={{ appVersion }}" type="text/javascript" defer></script>
+{{ end }}
+
+{{ define "header-running" }}
+<h1 class="header-title">
+    <span class="logo">
+        <img src="/static/jenkins-x.svg" width="100px" />
+    </span>
+    <a href="/">Pipelines</a>
+        &gt; <a href="/running">Running</a>
+</h1>
+{{ end }}
+
+<section class="dataTable-container">
+    <table id="dataTable" class="display cell-border" style="width: 100%">
+        <thead>
+            <tr>
+                <th class="repository">Repository</th>
+                <th class="branch">Branch</th>
+                <th class="build">Build</th>
+                <th class="context">Context</th>
+                <th class="stage">Stage</th>
+                <th class="step">Step</th>
+                <th class="duration">Duration</th>
+                <th class="start">Start</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .Pipelines }}
+            <tr id='{{ .String | replace "/" "-" | replace " " "-" }}'>
+                <td>
+                    <a href="/{{ .Owner }}/{{ .Repository }}">{{ .Owner }}/{{ .Repository }}</a>
+                </td>
+                <td>
+                    <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}">{{ .Branch }}</a>
+                </td>
+                <td>
+                    <a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a>
+                </td>
+                <td>{{ .Context }}</td>
+                <td>{{ .Stage }}</td>
+                <td>{{ .Step }}</td>
+                <td>{{ now.Sub .StepStartTime }}</td>
+                <td>{{ .StepStartTime.Format "2006-01-02 15:04:05" }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</section>

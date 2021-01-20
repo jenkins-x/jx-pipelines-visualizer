@@ -25,6 +25,7 @@ import (
 
 type Router struct {
 	Store                        *visualizer.Store
+	RunningPipelines             *visualizer.RunningPipelines
 	KConfig                      *rest.Config
 	PAInterface                  jenkinsv1.PipelineActivityInterface
 	Namespace                    string
@@ -95,6 +96,18 @@ func (r Router) Handler() (http.Handler, error) {
 	})
 
 	router.Handle("/healthz", healthzHandler())
+
+	router.Handle("/running", &RunningHandler{
+		RunningPipelines: r.RunningPipelines,
+		Render:           r.render,
+		Logger:           r.Logger,
+	})
+
+	router.Handle("/running/events", &RunningEventsHandler{
+		RunningPipelines: r.RunningPipelines,
+		Broker:           sse.NewBroker(nil),
+		Logger:           r.Logger,
+	})
 
 	router.Handle("/{owner}", &OwnerHandler{
 		Store:  r.Store,

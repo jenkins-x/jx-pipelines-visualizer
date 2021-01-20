@@ -75,17 +75,21 @@ func main() {
 		logger.WithError(err).Fatal("failed to create a new store")
 	}
 
+	runningPipelines := new(visualizer.RunningPipelines)
+
 	logger.WithField("namespace", options.namespace).WithField("resyncInterval", options.resyncInterval).Info("Starting Informer")
 	(&visualizer.Informer{
-		JXClient:       jxClient,
-		Namespace:      options.namespace,
-		ResyncInterval: options.resyncInterval,
-		Store:          store,
-		Logger:         logger,
+		JXClient:         jxClient,
+		Namespace:        options.namespace,
+		ResyncInterval:   options.resyncInterval,
+		Store:            store,
+		RunningPipelines: runningPipelines,
+		Logger:           logger,
 	}).Start(ctx)
 
 	handler, err := handlers.Router{
 		Store:                        store,
+		RunningPipelines:             runningPipelines,
 		KConfig:                      kClient.Config,
 		PAInterface:                  jxClient.JenkinsV1().PipelineActivities(options.namespace),
 		Namespace:                    options.namespace,

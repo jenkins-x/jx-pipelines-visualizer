@@ -13,11 +13,12 @@ import (
 )
 
 type Informer struct {
-	JXClient       *jxclientset.Clientset
-	Namespace      string
-	ResyncInterval time.Duration
-	Store          *Store
-	Logger         *logrus.Logger
+	JXClient         *jxclientset.Clientset
+	Namespace        string
+	ResyncInterval   time.Duration
+	Store            *Store
+	RunningPipelines *RunningPipelines
+	Logger           *logrus.Logger
 }
 
 func (i *Informer) Start(ctx context.Context) {
@@ -35,6 +36,7 @@ func (i *Informer) Start(ctx context.Context) {
 			}
 
 			i.indexPipelineActivity(pa, "index")
+			i.RunningPipelines.Add(pa)
 		},
 		UpdateFunc: func(old, new interface{}) {
 			pa, ok := new.(*jenkinsv1.PipelineActivity)
@@ -43,6 +45,7 @@ func (i *Informer) Start(ctx context.Context) {
 			}
 
 			i.indexPipelineActivity(pa, "re-index")
+			i.RunningPipelines.Add(pa)
 		},
 		DeleteFunc: func(obj interface{}) {
 			pa, ok := obj.(*jenkinsv1.PipelineActivity)
@@ -57,6 +60,7 @@ func (i *Informer) Start(ctx context.Context) {
 			if err != nil && i.Logger != nil {
 				i.Logger.WithError(err).WithField("PipelineActivity", pa.Name).Error("failed to delete PipelineActivity")
 			}
+			i.RunningPipelines.Add(pa)
 		},
 	})
 
