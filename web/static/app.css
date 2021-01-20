@@ -173,6 +173,11 @@ pre#logs {
     color: var(--color-running);
 }
 
+footer {
+    margin-top: 10px;
+    text-align: center;
+}
+
 @media (max-width: 600px) {
     .pipeline-metadata {
         display: none;

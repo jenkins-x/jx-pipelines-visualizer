@@ -15,6 +15,12 @@
             {{ partial "header" }}
         </header>
         {{ yield }}
+        <footer>
+            <span class="version">
+                <a href="https://github.com/jenkins-x/jx-pipelines-visualizer">Jenkins X Pipelines Visualizer</a>
+                version <a href="https://github.com/jenkins-x/jx-pipelines-visualizer/releases/tag/v{{ appVersion }}">{{ appVersion }}</a>
+            </span>
+        </footer>
     </main>
 </body>
 </html>
