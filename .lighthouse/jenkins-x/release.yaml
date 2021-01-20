@@ -16,12 +16,12 @@ spec:
           resources: {}
           workingDir: /workspace/source
         steps:
-        - image: gcr.io/jenkinsxio/jx-release-version:1.0.42
+        - image: gcr.io/jenkinsxio/jx-release-version:1.0.45
           name: next-version
           resources: {}
           script: |
             #!/usr/bin/env bash
-            VERSION=$(jx-release-version)
+            VERSION=$(jx-release-version -semantic-release)
             echo $VERSION > VERSION
         - image: gcr.io/jenkinsxio/jx-boot:3.1.28
           name: jx-variables
