@@ -13,6 +13,8 @@ func RepositoryURL(pipeline interface{}) string {
 	switch p := pipeline.(type) {
 	case visualizer.Pipeline:
 		return repositoryURLForPipeline(p)
+	case visualizer.RunningPipeline:
+		return repositoryURLForPipeline(p.Pipeline)
 	case *jenkinsv1.PipelineActivity:
 		return repositoryURLForPipelineActivity(p)
 	default:
@@ -24,6 +26,8 @@ func BranchURL(pipeline interface{}) string {
 	switch p := pipeline.(type) {
 	case visualizer.Pipeline:
 		return branchURLForPipeline(p)
+	case visualizer.RunningPipeline:
+		return branchURLForPipeline(p.Pipeline)
 	case *jenkinsv1.PipelineActivity:
 		return branchURLForPipelineActivity(p)
 	default:
@@ -44,6 +48,8 @@ func AuthorURL(pipeline interface{}) string {
 	switch p := pipeline.(type) {
 	case visualizer.Pipeline:
 		return authorURLForPipeline(p)
+	case visualizer.RunningPipeline:
+		return authorURLForPipeline(p.Pipeline)
 	case *jenkinsv1.PipelineActivity:
 		return authorURLForPipelineActivity(p)
 	default:
