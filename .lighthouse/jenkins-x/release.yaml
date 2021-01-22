@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   annotations:
-    lighthouse.jenkins-x.io/prependStepsURL: https://raw.githubusercontent.com/jenkins-x/jx3-pipeline-catalog/90dffaf666a091fb1bcf2d5fd65307ba04de6330/tasks/git-clone/git-clone.yaml
+    lighthouse.jenkins-x.io/prependStepsURL: https://raw.githubusercontent.com/jenkins-x/jx3-pipeline-catalog/60bed6408732c1eda91a15713f51a9f97dcb1757/tasks/git-clone/git-clone.yaml
   name: release
 spec:
   pipelineSpec:
@@ -16,14 +16,13 @@ spec:
           resources: {}
           workingDir: /workspace/source
         steps:
-        - image: gcr.io/jenkinsxio/jx-release-version:1.0.45
+        - image: gcr.io/jenkinsxio/jx-release-version:1.0.46
           name: next-version
           resources: {}
           script: |
             #!/usr/bin/env bash
-            VERSION=$(jx-release-version -semantic-release)
-            echo $VERSION > VERSION
-        - image: gcr.io/jenkinsxio/jx-boot:3.1.28
+            jx-release-version -semantic-release > VERSION
+        - image: gcr.io/jenkinsxio/jx-boot:3.1.159
           name: jx-variables
           resources: {}
           script: |
@@ -33,7 +32,7 @@ spec:
           name: release-binary
           resources: {}
           script: |
-            #!/usr/bin/env sh
+            #!/usr/bin/env bash
             source .jx/variables.sh
             make release
         - image: gcr.io/kaniko-project/executor:debug-v1.3.0
@@ -43,21 +42,21 @@ spec:
             #!/busybox/sh
             source .jx/variables.sh
             cp /tekton/creds-secrets/tekton-container-registry-auth/.dockerconfigjson /kaniko/.docker/config.json
-            /kaniko/executor $KANIKO_FLAGS --context=/workspace/source --dockerfile=/workspace/source/Dockerfile --destination=gcr.io/$DOCKER_REGISTRY_ORG/$REPO_NAME:$VERSION
+            /kaniko/executor $KANIKO_FLAGS --context=/workspace/source --dockerfile=Dockerfile --destination=gcr.io/$DOCKER_REGISTRY_ORG/$REPO_NAME:$VERSION
         - image: jnorwood/helm-docs:v1.4.0
           name: chart-docs
           resources: {}
           script: |
             #!/bin/ash
-            if [ -d "/workspace/source/charts/$REPO_NAME" ]; then cd /workspace/source/charts/$REPO_NAME
+            if [ -d "charts/$REPO_NAME" ]; then cd charts/$REPO_NAME
             helm-docs; else echo no charts; fi
-        - image: gcr.io/jenkinsxio/jx-changelog:0.0.13
+        - image: gcr.io/jenkinsxio/jx-changelog:0.0.25
           name: changelog
           script: |
             #!/usr/bin/env sh
             source .jx/variables.sh
 
-            if [ -d "/workspace/source/charts/$REPO_NAME" ]; then
+            if [ -d "charts/$REPO_NAME" ]; then
             sed -i -e "s/^version:.*/version: $VERSION/" ./charts/$REPO_NAME/Chart.yaml
             sed -i -e "s/repository:.*/repository: $DOCKER_REGISTRY\/$DOCKER_REGISTRY_ORG\/$APP_NAME/" ./charts/$REPO_NAME/values.yaml
             sed -i -e "s/tag:.*/tag: $VERSION/" ./charts/$REPO_NAME/values.yaml;
@@ -68,13 +67,13 @@ spec:
             git push origin v$VERSION
 
             jx changelog create --verbose --version=$VERSION --rev=$PULL_BASE_SHA --output-markdown=changelog.md --update-release=false
-        - image: gcr.io/jenkinsxio/jx-cli:3.1.28
+        - image: gcr.io/jenkinsxio/jx-cli:3.1.159
           name: release-chart
           resources: {}
           script: |
             #!/usr/bin/env bash
-            if [ -d "/workspace/source/charts/$REPO_NAME" ]; then source .jx/variables.sh
-            cd /workspace/source/charts/$REPO_NAME
+            if [ -d "charts/$REPO_NAME" ]; then source .jx/variables.sh
+            cd charts/$REPO_NAME
             make release; else echo no charts; fi
         - image: gcr.io/jenkinsxio/step-go-releaser:0.0.14
           name: upload-binaries
@@ -86,7 +85,7 @@ spec:
         - command:
           - jx-updatebot
           - pr
-          image: gcr.io/jenkinsxio/jx-updatebot:0.0.20
+          image: gcr.io/jenkinsxio/jx-updatebot:0.0.45
           name: promote-release
   serviceAccountName: tekton-bot
   timeout: 240h0m0s
