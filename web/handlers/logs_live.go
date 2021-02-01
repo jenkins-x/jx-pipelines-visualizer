@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	jxclient "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
@@ -37,7 +38,7 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	build := vars["build"]
 
-	name := strings.ToLower(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
+	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
 	pa, err := h.JXClient.JenkinsV1().PipelineActivities(h.Namespace).Get(ctx, name, metav1.GetOptions{})

@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxclientv1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/render"
@@ -39,7 +40,7 @@ func (h *PipelineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	build := vars["build"]
 
-	name := strings.ToLower(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
+	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
 	pa, err := h.PAInterface.Get(ctx, name, metav1.GetOptions{})

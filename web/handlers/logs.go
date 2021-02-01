@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	jxclientv1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -33,7 +34,7 @@ func (h *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	build := vars["build"]
 
-	name := strings.ToLower(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
+	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
 	var buildLogsURL string

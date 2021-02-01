@@ -8,7 +8,7 @@ require (
 	github.com/googleapis/gnostic v0.4.2 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/jenkins-x/jx-api/v4 v4.0.21
-	github.com/jenkins-x/jx-helpers/v3 v3.0.62 // indirect
+	github.com/jenkins-x/jx-helpers/v3 v3.0.62
 	github.com/jenkins-x/jx-pipeline v0.0.80
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rickb777/date v1.13.0
