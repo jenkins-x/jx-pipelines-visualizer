@@ -80,7 +80,14 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := strings.ToLower(fmt.Sprintf("%s/%s/%s #%s %s", owner, repo, branch, build, logContext))
+	key := fmt.Sprintf("%s/%s/%s #%s",
+		naming.ToValidName(owner),
+		naming.ToValidName(repo),
+		naming.ToValidName(branch),
+		strings.ToLower(build))
+	if len(logContext) > 0 {
+		key = fmt.Sprintf("%s %s", key, naming.ToValidName(logContext))
+	}
 	prList := prMap[key]
 	for logLine := range logger.GetRunningBuildLogs(context.TODO(), pa, prList, name) {
 		h.send(r.Context(), clientConnection, "log", logLine.Line)

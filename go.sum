@@ -956,6 +956,7 @@ github.com/jenkins-x/jx-logging/v3 v3.0.3 h1:sVACbwiKuaDFYPfJeVAU10MJI4DA6LcH1Rq
 github.com/jenkins-x/jx-logging/v3 v3.0.3/go.mod h1:Vp2ER2SYgGhAgEEHlLwfi2ZB54tz6ya1qExq0A4CKMI=
 github.com/jenkins-x/jx-pipeline v0.0.80 h1:9LEajdIFNbwJDWophORydlWT9m7k5npFz9Up92fQhLY=
 github.com/jenkins-x/jx-pipeline v0.0.80/go.mod h1:BdiVSSjFMfyMX7C9kOtMqwZGlNdxvh6/gEOny34G08w=
+github.com/jenkins-x/jx-pipeline v0.0.99 h1:XRUqS5/Bf8mdqm3kuZirddhcjOLPOsQJSd2QMxtZVpM=
 github.com/jenkins-x/lighthouse v0.0.907 h1:nCIaj1+ha+SQwTZHNc07VeXF6upSFNGRjNJ6MEgDvc4=
 github.com/jenkins-x/lighthouse v0.0.907/go.mod h1:prVMqvrE328izXLmSG09Cnlg/Ukn04PdNs3Xh2pRqjE=
 github.com/jenkins-x/logrus-stackdriver-formatter v0.2.3 h1:NuRWKUPCEX1wKlXA8ZYSG28qGKd41R7BK11YDQkPwqo=
