@@ -1,0 +1,67 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-03T10:59:19Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    branch: master
+    committer:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    issueIds:
+    - "94"
+    message: |
+      fix: handle live logs for repos with underscore
+
+      fixes #94
+    sha: 8c2ee689039560fcdbbfe8586d8f2f7a00db679a
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: noreply@github.com
+      name: GitHub
+    message: 'chore: add file for changelog'
+    sha: 1048cfebc14d2207608a7ef9cc68fba26e798b5e
+  - author:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    branch: master
+    committer:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    issueIds:
+    - "91"
+    message: |
+      fix: support repos with underscore
+
+      fixes #91
+    sha: 631586f6cb660be5fff1765c78f517db7c3209a0
+  gitHttpUrl: https://github.com/jenkins-x/jx-pipelines-visualizer
+  gitOwner: jenkins-x
+  gitRepository: jx-pipelines-visualizer
+  issues:
+  - body: "Similar to recently closed #91 \r\n\r\nThe fix in #91 allows the UI to show logs from LTS. Once the pipeline finishes running they are viewable. \r\n\r\nHowever, the UI is still unable to show in progress pipelines.\r\n\r\nGuessing it's a similar issue just elsewhere in the codebase?"
+    creationTimestamp: "2021-02-02T18:10:30Z"
+    id: "94"
+    state: closed
+    title: In progress logs not available for repos with underscore
+    url: https://github.com/jenkins-x/jx-pipelines-visualizer/issues/94
+  - body: "All other repos work, and the logs are in fact in s3. `jx get build logs` also retreives them successfully.\r\n\r\n![image](https://user-images.githubusercontent.com/474827/106169988-fd08d780-615d-11eb-90f7-5b2b3bf07533.png)\r\n\r\n![image](https://user-images.githubusercontent.com/474827/106170098-1f9af080-615e-11eb-85ea-637648c31d77.png)\r\n\r\n"
+    creationTimestamp: "2021-01-28T16:43:22Z"
+    id: "91"
+    state: closed
+    title: 'Error: Archived logs not found in the long term storage for repos with underscores in name '
+    url: https://github.com/jenkins-x/jx-pipelines-visualizer/issues/91
+  name: '{{ .Chart.Name }}'
+  version: 1.1.5
+status: {}
+ 
+{{- end }}
