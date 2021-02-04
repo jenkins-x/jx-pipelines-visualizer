@@ -1,0 +1,48 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-04T11:42:42Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade deps
+    sha: bf18eac39015b7a1535caf7c895a2251aecf26c4
+  - author:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    branch: master
+    committer:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    issueIds:
+    - "94"
+    message: |
+      fix: handle live logs for repos with underscore
+
+      fixes #94
+    sha: 8c2ee689039560fcdbbfe8586d8f2f7a00db679a
+  gitHttpUrl: https://github.com/jenkins-x/jx-pipelines-visualizer
+  gitOwner: jenkins-x
+  gitRepository: jx-pipelines-visualizer
+  issues:
+  - body: "Similar to recently closed #91 \r\n\r\nThe fix in #91 allows the UI to show logs from LTS. Once the pipeline finishes running they are viewable. \r\n\r\nHowever, the UI is still unable to show in progress pipelines.\r\n\r\nGuessing it's a similar issue just elsewhere in the codebase?"
+    creationTimestamp: "2021-02-02T18:10:30Z"
+    id: "94"
+    state: closed
+    title: In progress logs not available for repos with underscore
+    url: https://github.com/jenkins-x/jx-pipelines-visualizer/issues/94
+  name: '{{ .Chart.Name }}'
+  version: 1.1.6
+status: {}
+ 
+{{- end }}
