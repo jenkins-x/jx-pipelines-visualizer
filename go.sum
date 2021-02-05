@@ -113,6 +113,8 @@ github.com/Azure/go-autorest/autorest/adal v0.9.6 h1:d3pSDwvBWBLqdA91u+keH1zs1cC
 github.com/Azure/go-autorest/autorest/adal v0.9.6/go.mod h1:B7KF7jKIeC9Mct5spmyCB/A8CG/sEz1vwIRGv/bbw7A=
 github.com/Azure/go-autorest/autorest/adal v0.9.10 h1:r6fZHMaHD8B6LDCn0o5vyBFHIHrM6Ywwx7mb49lPItI=
 github.com/Azure/go-autorest/autorest/adal v0.9.10/go.mod h1:B7KF7jKIeC9Mct5spmyCB/A8CG/sEz1vwIRGv/bbw7A=
+github.com/Azure/go-autorest/autorest/adal v0.9.11 h1:L4/pmq7poLdsy41Bj1FayKvBhayuWRYkx9HU5i4Ybl0=
+github.com/Azure/go-autorest/autorest/adal v0.9.11/go.mod h1:nBKAnTomx8gDtl+3ZCJv2v0KACFHWTB2drffI1B68Pk=
 github.com/Azure/go-autorest/autorest/azure/auth v0.1.0/go.mod h1:Gf7/i2FUpyb/sGBLIFxTBzrNzBo7aPXXE3ZVeDRwdpM=
 github.com/Azure/go-autorest/autorest/azure/auth v0.4.0/go.mod h1:Oo5cRhLvZteXzI2itUm5ziqsoIxRkzrt3t61FeZaS18=
 github.com/Azure/go-autorest/autorest/azure/auth v0.5.3 h1:lZifaPRAk1bqg5vGqreL6F8uLC5V0fDpY8nFvc3boFc=
@@ -879,6 +881,8 @@ github.com/jenkins-x/go-scm v1.5.216 h1:aQK0rthmvoEh6HqNmb4nPdr0Dj474Q7T6/lFgOrj
 github.com/jenkins-x/go-scm v1.5.216/go.mod h1:Iuk0V0mt0QGIt50TZyChHqRIiXTnp1ink9RyNoe7o7c=
 github.com/jenkins-x/jx-api/v4 v4.0.23 h1:GpgytvBXbHVGaeqsRLGl9f1v8vpxMsTWlZNPyhaXgF0=
 github.com/jenkins-x/jx-api/v4 v4.0.23/go.mod h1:IC88X+24Nmexuj7lRNRgzfrchzlo0qysfwkICpqDmMQ=
+github.com/jenkins-x/jx-api/v4 v4.0.24 h1:REuDkac0UCB/rAlbLt/Jd8LpaGGnGctr5dee8mKVHng=
+github.com/jenkins-x/jx-api/v4 v4.0.24/go.mod h1:IC88X+24Nmexuj7lRNRgzfrchzlo0qysfwkICpqDmMQ=
 github.com/jenkins-x/jx-gitops v0.0.547 h1:RI8aTfoFF8QkmMPTDSvJFNdlfGeTmA8n7WBoju0C3UI=
 github.com/jenkins-x/jx-gitops v0.0.547/go.mod h1:s/JXKW2ehWXrHvTrZ60txlni8vzHuQKdoIbJdlp2RJk=
 github.com/jenkins-x/jx-helpers/v3 v3.0.73 h1:MdobaXNE4MyihIhXvzYoSTRKhEDlJ9loZo9uOzWKOQ4=

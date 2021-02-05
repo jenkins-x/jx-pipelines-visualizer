@@ -1,11 +1,12 @@
 module github.com/jenkins-x/jx-pipelines-visualizer
 
 require (
+	github.com/Azure/go-autorest/autorest/adal v0.9.11 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.0
 	github.com/blevesearch/bleve v1.0.14
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/jenkins-x/jx-api/v4 v4.0.23
+	github.com/jenkins-x/jx-api/v4 v4.0.24
 	github.com/jenkins-x/jx-helpers/v3 v3.0.73
 	github.com/jenkins-x/jx-pipeline v0.0.101
 	github.com/mitchellh/go-homedir v1.1.0
