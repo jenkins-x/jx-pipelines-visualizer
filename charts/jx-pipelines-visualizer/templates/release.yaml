@@ -1,0 +1,36 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-16T12:47:51Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: 52448671+hervelemeur@users.noreply.github.com
+      name: Hervé Le Meur
+    branch: master
+    committer:
+      email: noreply@github.com
+      name: GitHub
+    message: 'fix: add jenkins-x chart icon'
+    sha: b1faf4f9c6e48272c3a70513bc98c9e775bc0dbd
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade deps
+    sha: c08b85e641ecb38813b869b32d4c3490271d846c
+  gitHttpUrl: https://github.com/jenkins-x/jx-pipelines-visualizer
+  gitOwner: jenkins-x
+  gitRepository: jx-pipelines-visualizer
+  name: '{{ .Chart.Name }}'
+  version: 1.1.10
+status: {}
+ 
+{{- end }}
