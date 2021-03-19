@@ -19,14 +19,15 @@ import (
 
 var (
 	options struct {
-		namespace                    string
-		resyncInterval               time.Duration
-		archivedLogsURLTemplate      string
-		archivedPipelinesURLTemplate string
-		kubeConfigPath               string
-		listenAddr                   string
-		logLevel                     string
-		printVersion                 bool
+		namespace                       string
+		resyncInterval                  time.Duration
+		archivedLogsURLTemplate         string
+		archivedPipelinesURLTemplate    string
+		archivedPipelineRunsURLTemplate string
+		kubeConfigPath                  string
+		listenAddr                      string
+		logLevel                        string
+		printVersion                    bool
 	}
 )
 
@@ -35,6 +36,7 @@ func init() {
 	flag.DurationVar(&options.resyncInterval, "resync-interval", 1*time.Minute, "Resync interval between full re-list operations")
 	flag.StringVar(&options.archivedLogsURLTemplate, "archived-logs-url-template", "", "Go template string used to build the archived logs URL")
 	flag.StringVar(&options.archivedPipelinesURLTemplate, "archived-pipelines-url-template", "", "Go template string used to build the archived pipelines URL")
+	flag.StringVar(&options.archivedPipelineRunsURLTemplate, "archived-pipelineruns-url-template", "", "Go template string used to build the archived pipelineruns URL")
 	flag.StringVar(&options.logLevel, "log-level", "INFO", "Log level - one of: trace, debug, info, warn(ing), error, fatal or panic")
 	flag.StringVar(&options.kubeConfigPath, "kubeconfig", kube.DefaultKubeConfigPath(), "Kubernetes Config Path. Default: KUBECONFIG env var value")
 	flag.StringVar(&options.listenAddr, "listen-addr", ":8080", "Address on which the server will listen for incoming connections")
@@ -88,14 +90,15 @@ func main() {
 	}).Start(ctx)
 
 	handler, err := handlers.Router{
-		Store:                        store,
-		RunningPipelines:             runningPipelines,
-		KConfig:                      kClient.Config,
-		PAInterface:                  jxClient.JenkinsV1().PipelineActivities(options.namespace),
-		Namespace:                    options.namespace,
-		ArchivedLogsURLTemplate:      options.archivedLogsURLTemplate,
-		ArchivedPipelinesURLTemplate: options.archivedPipelinesURLTemplate,
-		Logger:                       logger,
+		Store:                           store,
+		RunningPipelines:                runningPipelines,
+		KConfig:                         kClient.Config,
+		PAInterface:                     jxClient.JenkinsV1().PipelineActivities(options.namespace),
+		Namespace:                       options.namespace,
+		ArchivedLogsURLTemplate:         options.archivedLogsURLTemplate,
+		ArchivedPipelinesURLTemplate:    options.archivedPipelinesURLTemplate,
+		ArchivedPipelineRunsURLTemplate: options.archivedPipelineRunsURLTemplate,
+		Logger:                          logger,
 	}.Handler()
 	if err != nil {
 		logger.WithError(err).Fatal("failed to initialize the HTTP handler")
