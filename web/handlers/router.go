@@ -24,15 +24,16 @@ import (
 )
 
 type Router struct {
-	Store                        *visualizer.Store
-	RunningPipelines             *visualizer.RunningPipelines
-	KConfig                      *rest.Config
-	PAInterface                  jenkinsv1.PipelineActivityInterface
-	Namespace                    string
-	ArchivedLogsURLTemplate      string
-	ArchivedPipelinesURLTemplate string
-	Logger                       *logrus.Logger
-	render                       *render.Render
+	Store                           *visualizer.Store
+	RunningPipelines                *visualizer.RunningPipelines
+	KConfig                         *rest.Config
+	PAInterface                     jenkinsv1.PipelineActivityInterface
+	Namespace                       string
+	ArchivedLogsURLTemplate         string
+	ArchivedPipelinesURLTemplate    string
+	ArchivedPipelineRunsURLTemplate string
+	Logger                          *logrus.Logger
+	render                          *render.Render
 }
 
 func (r Router) Handler() (http.Handler, error) {
@@ -84,6 +85,14 @@ func (r Router) Handler() (http.Handler, error) {
 	var archivedPipelinesURLTemplate *template.Template
 	if len(r.ArchivedPipelinesURLTemplate) > 0 {
 		archivedPipelinesURLTemplate, err = template.New("archivedPipelinesURL").Funcs(sprig.TxtFuncMap()).Parse(r.ArchivedPipelinesURLTemplate)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var archivedPipelineRunsURLTemplate *template.Template
+	if len(r.ArchivedPipelineRunsURLTemplate) > 0 {
+		archivedPipelineRunsURLTemplate, err = template.New("archivedPipelineRunsURL").Funcs(sprig.TxtFuncMap()).Parse(r.ArchivedPipelineRunsURLTemplate)
 		if err != nil {
 			return nil, err
 		}
@@ -160,12 +169,13 @@ func (r Router) Handler() (http.Handler, error) {
 	})
 
 	router.Handle("/namespaces/{namespace}/pipelineruns/{pipelineRun}", &PipelineRunHandler{
-		TektonClient: tknClient,
-		PAInterface:  r.PAInterface,
-		Namespace:    r.Namespace,
-		Store:        r.Store,
-		Render:       r.render,
-		Logger:       r.Logger,
+		TektonClient:                  tknClient,
+		PAInterface:                   r.PAInterface,
+		StoredPipelineRunsURLTemplate: archivedPipelineRunsURLTemplate,
+		Namespace:                     r.Namespace,
+		Store:                         r.Store,
+		Render:                        r.render,
+		Logger:                        r.Logger,
 	})
 
 	router.Handle("/teams/{team}/projects/{owner}/{repo}/{branch}/{build:[0-9]+}", jxuiCompatibilityHandler(r.Namespace))
