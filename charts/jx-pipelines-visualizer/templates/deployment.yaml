@@ -53,6 +53,10 @@ spec:
         - -archived-pipelineruns-url-template
         - {{ . }}
         {{- end }}
+        {{- with .Values.config.pipelineTraceURLTemplate }}
+        - -pipeline-trace-url-template
+        - {{ . }}
+        {{- end }}
         {{- with .Values.config.logLevel }}
         - -log-level
         - {{ . }}

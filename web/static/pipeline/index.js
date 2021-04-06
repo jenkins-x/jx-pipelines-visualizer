@@ -59,6 +59,7 @@
     // Listeners
 
     const addClickEventToStep = () => document.getElementById('toggle-steps').addEventListener('click', toggleAllSteps);
+    const addClickOpenTrace = () => document.getElementById('open-trace').addEventListener('click', openTrace);
     const addClickShowTimeline = () => document.getElementById('show-timeline').addEventListener('click', showTimeline);
     const addLinks = () => document.querySelectorAll('.log-number').forEach(elem => elem.addEventListener('click', onClickLineNumber));
 
@@ -89,6 +90,11 @@
     };
 
     // Options
+
+    const openTrace = () => {
+        const traceURL = document.getElementById('open-trace').getAttribute('href');
+        window.open(traceURL);
+    };
 
     const showTimeline = () => toggleClassName('#pipeline-timeline', 'steps-hidden');
 
@@ -272,6 +278,7 @@
         if (!ARCHIVE) {
             addStageStepsLinksEvent();
             addClickShowTimeline();
+            addClickOpenTrace();
         }
     
         if (BUILD_LOG_URL) {

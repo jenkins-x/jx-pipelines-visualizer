@@ -32,35 +32,12 @@ type Router struct {
 	ArchivedLogsURLTemplate         string
 	ArchivedPipelinesURLTemplate    string
 	ArchivedPipelineRunsURLTemplate string
+	PipelineTraceURLTemplate        string
 	Logger                          *logrus.Logger
 	render                          *render.Render
 }
 
 func (r Router) Handler() (http.Handler, error) {
-	r.render = render.New(render.Options{
-		Directory:     "web/templates",
-		Layout:        "layout",
-		IsDevelopment: version.Version == "dev",
-		Funcs: []htmltemplate.FuncMap{
-			sprig.HtmlFuncMap(),
-			htmltemplate.FuncMap{
-				"pipelinePullRequestURL":                   functions.PipelinePullRequestURL,
-				"pipelinePreviewEnvironmentApplicationURL": functions.PipelinePreviewEnvironmentApplicationURL,
-				"repositoryURL":                            functions.RepositoryURL,
-				"branchURL":                                functions.BranchURL,
-				"commitURL":                                functions.CommitURL,
-				"authorURL":                                functions.AuthorURL,
-				"vdate":                                    functions.VDate,
-				"sortPipelineCounts":                       functions.SortPipelineCounts,
-				"isAvailable":                              functions.IsAvailable,
-				"appVersion":                               functions.AppVersion,
-			},
-		},
-	})
-
-	router := mux.NewRouter()
-	router.StrictSlash(true)
-
 	kClient, err := kubernetes.NewForConfig(r.KConfig)
 	if err != nil {
 		return nil, err
@@ -97,6 +74,39 @@ func (r Router) Handler() (http.Handler, error) {
 			return nil, err
 		}
 	}
+
+	var pipelineTraceURLTemplate *template.Template
+	if len(r.PipelineTraceURLTemplate) > 0 {
+		pipelineTraceURLTemplate, err = template.New("pipelineTraceURL").Funcs(sprig.TxtFuncMap()).Parse(r.PipelineTraceURLTemplate)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	r.render = render.New(render.Options{
+		Directory:     "web/templates",
+		Layout:        "layout",
+		IsDevelopment: version.Version == "dev",
+		Funcs: []htmltemplate.FuncMap{
+			sprig.HtmlFuncMap(),
+			htmltemplate.FuncMap{
+				"pipelinePullRequestURL":                   functions.PipelinePullRequestURL,
+				"pipelinePreviewEnvironmentApplicationURL": functions.PipelinePreviewEnvironmentApplicationURL,
+				"pipelineTraceURL":                         functions.PipelineTraceURLFunc(pipelineTraceURLTemplate),
+				"repositoryURL":                            functions.RepositoryURL,
+				"branchURL":                                functions.BranchURL,
+				"commitURL":                                functions.CommitURL,
+				"authorURL":                                functions.AuthorURL,
+				"vdate":                                    functions.VDate,
+				"sortPipelineCounts":                       functions.SortPipelineCounts,
+				"isAvailable":                              functions.IsAvailable,
+				"appVersion":                               functions.AppVersion,
+			},
+		},
+	})
+
+	router := mux.NewRouter()
+	router.StrictSlash(true)
 
 	router.Handle("/", &HomeHandler{
 		Store:  r.Store,
