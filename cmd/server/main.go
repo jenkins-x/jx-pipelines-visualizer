@@ -24,6 +24,7 @@ var (
 		archivedLogsURLTemplate         string
 		archivedPipelinesURLTemplate    string
 		archivedPipelineRunsURLTemplate string
+		pipelineTraceURLTemplate        string
 		kubeConfigPath                  string
 		listenAddr                      string
 		logLevel                        string
@@ -37,6 +38,7 @@ func init() {
 	flag.StringVar(&options.archivedLogsURLTemplate, "archived-logs-url-template", "", "Go template string used to build the archived logs URL")
 	flag.StringVar(&options.archivedPipelinesURLTemplate, "archived-pipelines-url-template", "", "Go template string used to build the archived pipelines URL")
 	flag.StringVar(&options.archivedPipelineRunsURLTemplate, "archived-pipelineruns-url-template", "", "Go template string used to build the archived pipelineruns URL")
+	flag.StringVar(&options.pipelineTraceURLTemplate, "pipeline-trace-url-template", "", "Go template string used to build the pipeline trace URL")
 	flag.StringVar(&options.logLevel, "log-level", "INFO", "Log level - one of: trace, debug, info, warn(ing), error, fatal or panic")
 	flag.StringVar(&options.kubeConfigPath, "kubeconfig", kube.DefaultKubeConfigPath(), "Kubernetes Config Path. Default: KUBECONFIG env var value")
 	flag.StringVar(&options.listenAddr, "listen-addr", ":8080", "Address on which the server will listen for incoming connections")
@@ -98,6 +100,7 @@ func main() {
 		ArchivedLogsURLTemplate:         options.archivedLogsURLTemplate,
 		ArchivedPipelinesURLTemplate:    options.archivedPipelinesURLTemplate,
 		ArchivedPipelineRunsURLTemplate: options.archivedPipelineRunsURLTemplate,
+		PipelineTraceURLTemplate:        options.pipelineTraceURLTemplate,
 		Logger:                          logger,
 	}.Handler()
 	if err != nil {
