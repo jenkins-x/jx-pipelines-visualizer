@@ -94,6 +94,10 @@ istio:
   apiVersion: networking.istio.io/v1beta1
   gateway: jx-gateway
 
+jx:
+  # whether to create a Release CRD when installing charts with Release CRDs included
+  releaseCRD: true
+  
 serviceAccount:
   # allow additional annotations to be added to the ServiceAccount
   # such as for workload identity on clouds
