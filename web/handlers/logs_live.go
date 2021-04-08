@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/jenkins-x-plugins/jx-pipeline/pkg/tektonlog"
 	jxclient "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
-	"github.com/jenkins-x/jx-pipeline/pkg/tektonlog"
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 	sse "github.com/subchord/go-sse"
