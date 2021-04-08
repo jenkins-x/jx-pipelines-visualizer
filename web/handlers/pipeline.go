@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/jenkins-x-plugins/jx-pipeline/pkg/cloud/buckets"
 	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxclientv1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
-	"github.com/jenkins-x/jx-pipeline/pkg/cloud/buckets"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/render"
 	"gopkg.in/yaml.v2"
