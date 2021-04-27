@@ -11,6 +11,7 @@ This is a Web UI for [Jenkins X](https://jenkins-x.io/), with a clear goal: **vi
 - Retrieve the archived pipelines logs from the long-term storage (GCS, S3, ...)
 - View all pipelines with their status, and filter/sort them
 - Read-only: only requires READ permissions on the Jenkins X and Tekton Pipelines CRDs
+- Expose a [Shields.io](https://shields.io/) compatible [endpoint](https://shields.io/endpoint)
 - Backward-compatible URLs with the old "JX UI" - so that you can easily swap the JXUI URL for the jx-pipelines-visualizer one in the Lighthouse config, and have Lighthouse set links to jx-pipelines-visualizer in GitHub Pull Requests.
 
 ### Screenshots
@@ -114,7 +115,15 @@ $ helm repo update
 $ helm install --name jx-pipelines-visualizer jx/jx-pipelines-visualizer
 ```
 
-## Configuration
+## Usage
+
+Just go to the homepage, and use the links to view the pipelines logs.
+
+To generate a status badge compatible with [shields.io](https://shields.io/):
+- read the [shields.io documentation](https://shields.io/endpoint)
+- the custom endpoint is: `https://YOUR_HOST/{owner}/{repo}/{branch}/shields.io` - for example `https://jx.example.com/my-org/my-repo/master/shields.io`. It returns a JSON response with the status of the latest build for the given branch.
+
+### Configuration
 
 See the [values.yaml](charts/jx-pipelines-visualizer/values.yaml) file for the configuration.
 

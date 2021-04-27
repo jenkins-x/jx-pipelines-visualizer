@@ -146,6 +146,12 @@ func (r Router) Handler() (http.Handler, error) {
 		Logger: r.Logger,
 	})
 
+	router.Handle("/{owner}/{repo}/{branch}/shields.io", &ShieldsIOHandler{
+		Store:  r.Store,
+		Render: r.render,
+		Logger: r.Logger,
+	})
+
 	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
 		PAInterface:                r.PAInterface,
 		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
