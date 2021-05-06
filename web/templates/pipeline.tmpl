@@ -194,6 +194,18 @@
                             {{- end -}}
                         </span>
                     </li>
+                    {{- if (index .Pipeline.Labels "event-GUID") -}}
+                    <li>
+                        <span class="title">Event</span>
+                        <span title="{{ index .Pipeline.Labels `event-GUID` }}">
+                            {{- with traceURL (index .Pipeline.Annotations "lighthouse.jenkins-x.io/traceID") -}}
+                            <a href="{{ . }}">{{ abbrev 23 (index $.Pipeline.Labels "event-GUID") }}</a>
+                            {{- else -}}
+                            {{ abbrev 23 (index .Pipeline.Labels "event-GUID") }}
+                            {{- end -}}
+                        </span>
+                    </li>
+                    {{- end -}}
                 </ul>
             </div>
         </div>
@@ -201,7 +213,7 @@
             <div class="card pipeline-card">
                 <span class="title card-header">
                     Stages 
-                    {{- with (pipelineTraceURL .Pipeline) }}
+                    {{- with (traceURL (index .Pipeline.Annotations "pipeline.jenkins-x.io/traceID")) }}
                     <button class="option-button" id="open-trace" href="{{ . }}">Trace</button> 
                     {{- end }}
                     <button class="option-button" id="show-timeline">Timeline</button>
