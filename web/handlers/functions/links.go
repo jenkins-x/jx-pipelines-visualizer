@@ -3,11 +3,18 @@ package functions
 import (
 	"fmt"
 	"strings"
+	"text/template"
 
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 
 	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 )
+
+func TraceURLFunc(pipelineTraceURLTemplate *template.Template) func(string) string {
+	return func(traceID string) string {
+		return traceIDToTraceURL(traceID, pipelineTraceURLTemplate)
+	}
+}
 
 func RepositoryURL(pipeline interface{}) string {
 	switch p := pipeline.(type) {
@@ -139,4 +146,22 @@ func pipelineActivityProvider(pa *jenkinsv1.PipelineActivity) string {
 	}
 
 	return ""
+}
+
+func traceIDToTraceURL(traceID string, pipelineTraceURLTemplate *template.Template) string {
+	if pipelineTraceURLTemplate == nil {
+		return ""
+	}
+	if traceID == "" {
+		return ""
+	}
+
+	sb := new(strings.Builder)
+	err := pipelineTraceURLTemplate.Execute(sb, map[string]string{
+		"TraceID": traceID,
+	})
+	if err != nil {
+		return err.Error()
+	}
+	return sb.String()
 }
