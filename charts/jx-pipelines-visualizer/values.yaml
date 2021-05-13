@@ -50,7 +50,7 @@ pod:
   securityContext:
     fsGroup: 1000
   env: {}
-
+  envFrom: []
 service:
   port: 80
   type:

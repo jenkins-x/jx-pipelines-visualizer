@@ -72,6 +72,10 @@ spec:
           value: {{ quote $pval }}
         {{- end }}
         {{- end }}
+        {{- with .Values.pod.envFrom }}
+        envFrom:
+          {{- toYaml . | trim | nindent 10 }}
+        {{- end }}
         ports:
         - name: http
           containerPort: 8080
