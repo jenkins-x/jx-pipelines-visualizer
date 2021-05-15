@@ -188,7 +188,9 @@
             .join('\n');
 
     const loadByBuildLogUrl = () => {
-        fetch(`${LOGS_URL}/logs`).then((response) => {
+        const hostnameWithoutLogin = window.location.origin.replace(/\/\/[^@]*@/, '//');
+   
+        fetch(`${hostnameWithoutLogin}${LOGS_URL}/logs`).then((response) => {
             if (response.status == 404) {
                 throw new Error('Archived logs not found in the long term storage');
             }
