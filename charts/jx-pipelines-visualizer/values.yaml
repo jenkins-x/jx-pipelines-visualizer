@@ -60,6 +60,7 @@ service:
 
 ingress:
   enabled: false
+  class: nginx
   labels: {}
   annotations: {}
 
@@ -67,7 +68,6 @@ ingress:
   # - pipelines.example.com
   # - pipelines.foo.bar
   hosts: []
-
 
   # enables basic auth secret to be created
   basicAuth:

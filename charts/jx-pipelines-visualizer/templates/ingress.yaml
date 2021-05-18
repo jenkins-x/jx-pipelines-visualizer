@@ -8,10 +8,16 @@ metadata:
   labels:
     {{- include "jxpipelines.labels" . | nindent 4 }}
     {{- with .Values.ingress.labels }}
-    {{ tpl (toYaml .) $ | trim | indent 4 }}
+      {{- tpl (toYaml .) $ | trim | nindent 4 }}
     {{- end }}
-  {{- with .Values.ingress.annotations }}
-  annotations: {{- tpl (toYaml .) $ | trim | nindent 4 }}
+  {{- if or .Values.ingress.annotations .Values.ingress.class }}
+  annotations:
+    {{- with .Values.ingress.class }}
+    kubernetes.io/ingress.class: {{ . }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+      {{- tpl (toYaml .) $ | trim | nindent 4 }}
+    {{- end }}
   {{- end }}
 spec:
   rules:
