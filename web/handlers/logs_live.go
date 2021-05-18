@@ -13,9 +13,11 @@ import (
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 	sse "github.com/subchord/go-sse"
+	tknv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -51,6 +53,16 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pipelineruns, labelSelector, err := h.getPipelineRuns(ctx, owner, repo, branch, build)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if len(pipelineruns) == 0 {
+		http.Error(w, fmt.Sprintf("no PipelineRun found using labelSelector %s", labelSelector), http.StatusTooEarly)
+		return
+	}
+
 	clientConnection, err := h.Broker.Connect(xid.New().String(), w, r)
 	if err != nil {
 		// streaming unsupported. http.Error() already used in broker.Connect()
@@ -63,34 +75,18 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		TektonClient: h.TektonClient,
 		Namespace:    h.Namespace,
 	}
-	logContext := vars["logContext"]
-	if logContext == "" {
-		logContext = pa.Spec.Context
-	}
-	buildFilter := &tektonlog.BuildPodInfoFilter{
-		Owner:      owner,
-		Repository: repo,
-		Branch:     branch,
-		Build:      build,
-		Context:    logContext,
-	}
-	_, _, prMap, err := logger.GetTektonPipelinesWithActivePipelineActivity(context.TODO(), buildFilter)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	for logLine := range logger.GetRunningBuildLogs(ctx, pa, pipelineruns, name) {
+		h.send(r.Context(), clientConnection, "log", logLine.Line)
 	}
 
-	key := fmt.Sprintf("%s/%s/%s #%s",
-		naming.ToValidName(owner),
-		naming.ToValidName(repo),
-		naming.ToValidName(branch),
-		strings.ToLower(build))
-	if len(logContext) > 0 {
-		key = fmt.Sprintf("%s %s", key, naming.ToValidName(logContext))
-	}
-	prList := prMap[key]
-	for logLine := range logger.GetRunningBuildLogs(context.TODO(), pa, prList, name) {
-		h.send(r.Context(), clientConnection, "log", logLine.Line)
+	if err := logger.Err(); err == nil && len(pipelineruns) == 1 && pipelineruns[0].Labels["jenkins.io/pipelineType"] == "meta" {
+		// if we started with only the meta-pipeline, let's now retry with the "real" build pipeline
+		pipelineruns, _, _ = h.getPipelineRuns(ctx, owner, repo, branch, build, "jenkins.io/pipelineType=build")
+		if len(pipelineruns) > 0 {
+			for logLine := range logger.GetRunningBuildLogs(ctx, pa, pipelineruns, name) {
+				h.send(r.Context(), clientConnection, "log", logLine.Line)
+			}
+		}
 	}
 
 	if err := logger.Err(); err != nil {
@@ -118,4 +114,53 @@ func (h *LiveLogsHandler) send(ctx context.Context, clientConnection *sse.Client
 			Data:  eventData,
 		})
 	}
+}
+
+func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, branch, build string, extraSelectors ...string) ([]*tknv1beta1.PipelineRun, string, error) {
+	var extraLabelSet labels.Set
+	for _, extraSelector := range extraSelectors {
+		labelSet, err := labels.ConvertSelectorToLabelsMap(extraSelector)
+		if err != nil {
+			return nil, "", err
+		}
+		extraLabelSet = labels.Merge(extraLabelSet, labelSet)
+	}
+
+	labelSet := labels.Set(map[string]string{
+		"lighthouse.jenkins-x.io/refs.org":  owner,
+		"lighthouse.jenkins-x.io/refs.repo": repo,
+		"lighthouse.jenkins-x.io/branch":    branch,
+		"lighthouse.jenkins-x.io/buildNum":  build,
+	})
+	labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
+	prList, err := h.TektonClient.TektonV1beta1().PipelineRuns(h.Namespace).List(ctx, metav1.ListOptions{
+		LabelSelector: labelSelector,
+	})
+	if err != nil {
+		return nil, labelSelector, err
+	}
+
+	if len(prList.Items) == 0 {
+		// let's also try with the "old" labels used in jx v2
+		labelSet := labels.Set(map[string]string{
+			"owner":      owner,
+			"repository": repo,
+			"branch":     branch,
+			"build":      build,
+		})
+		labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
+		prList, err = h.TektonClient.TektonV1beta1().PipelineRuns(h.Namespace).List(ctx, metav1.ListOptions{
+			LabelSelector: labelSelector,
+		})
+		if err != nil {
+			return nil, labelSelector, err
+		}
+	}
+
+	prs := make([]*tknv1beta1.PipelineRun, 0, len(prList.Items))
+	for i := range prList.Items {
+		prs = append(prs, &prList.Items[i])
+	}
+
+	return prs, labelSelector, nil
 }
