@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	jenkinsv1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"net/http"
 	"strings"
 
@@ -53,7 +54,8 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pipelineruns, labelSelector, err := h.getPipelineRuns(ctx, owner, repo, branch, build)
+	prBuild := getPipelineRunBuild(pa, build)
+	pipelineruns, labelSelector, err := h.getPipelineRuns(ctx, owner, repo, branch, prBuild)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,6 +101,18 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case <-clientConnection.Done():
 	case <-r.Context().Done():
 	}
+}
+
+// getPipelineRunBuild the PipelineRun build can be different to the PipelineActivity build if using Jenkins X v3
+// as lighthouse tekton controller uses an automatically generated large build number on its generated PipelineRun resources
+func getPipelineRunBuild(pa *jenkinsv1.PipelineActivity, build string) string {
+	if pa.Labels != nil {
+		answer := pa.Labels["lighthouse.jenkins-x.io/buildNum"]
+		if answer != "" {
+			return answer
+		}
+	}
+	return build
 }
 
 func (h *LiveLogsHandler) send(ctx context.Context, clientConnection *sse.ClientConnection, eventType, eventData string) {
