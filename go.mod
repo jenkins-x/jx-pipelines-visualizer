@@ -7,7 +7,7 @@ require (
 	github.com/glycerine/go-unsnap-stream v0.0.0-20210130063903-47dfef350d96 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/jenkins-x-plugins/jx-pipeline v0.0.138
+	github.com/jenkins-x-plugins/jx-pipeline v0.0.139
 	github.com/jenkins-x/go-scm v1.9.0 // indirect
 	github.com/jenkins-x/jx-api/v4 v4.0.33
 	github.com/jenkins-x/jx-helpers/v3 v3.0.114
