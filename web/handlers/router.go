@@ -90,10 +90,10 @@ func (r Router) Handler() (http.Handler, error) {
 		Funcs: []htmltemplate.FuncMap{
 			sprig.HtmlFuncMap(),
 			htmltemplate.FuncMap{
-				"pipelinePullRequestURL":                   functions.PipelinePullRequestURL,
 				"pipelinePreviewEnvironmentApplicationURL": functions.PipelinePreviewEnvironmentApplicationURL,
 				"traceURL":           functions.TraceURLFunc(pipelineTraceURLTemplate),
 				"repositoryURL":      functions.RepositoryURL,
+				"prURL":              functions.PullRequestURL,
 				"branchURL":          functions.BranchURL,
 				"commitURL":          functions.CommitURL,
 				"authorURL":          functions.AuthorURL,
