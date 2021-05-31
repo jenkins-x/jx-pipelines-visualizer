@@ -143,11 +143,11 @@
                             {{- end -}}
                         </span>
                     </li>
-                    {{- if pipelinePullRequestURL .Pipeline -}}
+                    {{- if prURL .Pipeline -}}
                     <li>
                         <span class="title">PR</span>
                         <span>
-                            <a href="{{ pipelinePullRequestURL .Pipeline }}" title="{{ .Pipeline.Spec.PullTitle }}">{{ .Pipeline.Spec.GitBranch | replace "PR-" "" }}</a>
+                            <a href="{{ prURL .Pipeline }}" title="{{ .Pipeline.Spec.PullTitle }}">{{ .Pipeline.Spec.GitBranch | replace "PR-" "" }}</a>
                         </span>
                     </li>
                     {{- else -}}
