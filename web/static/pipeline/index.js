@@ -182,10 +182,10 @@
         const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
 
         return `
-        <tr id="logsL${lineNumber}" data-step=${currentStep} data-is-parent-step=${containerId !== ''} class="step-line-hidden">
-            <td class="log-number" data-line-number=${lineNumber}></td>
+        <tr id="logsL${lineNumber}" data-step="${currentStep}" data-is-parent-step="${containerId !== ''}" class="step-line-hidden">
+            <td class="log-number" data-line-number="${lineNumber}"></td>
             <td class="log-dropdown-icon"></td>
-            <td class="log-status-icon" data-status=${STEPS[containerId] ? STEPS[containerId].status : ''}></td>
+            <td class="log-status-icon" data-status="${STEPS[containerId] ? STEPS[containerId].status : ''}"></td>
             <td class="log-timer">${STEPS[containerId] ? STEPS[containerId].timer : ''}</td>
             <td class="log-line" id="${containerId}">
                 <span class="line-text ${type}">${transformedText}</span>
@@ -249,8 +249,10 @@
                 if(followLogsCheckbox.checked) {
                     const lastLog = document.getElementById(`logsL${lineNumber}`);
                     getAllParentSteps().forEach(step => toggleStep(step, false));
-                    // Open current step
-                    toggleStep(getParentStep(currentStep), true);
+                    if(currentStep) {
+                        // Open current step
+                        toggleStep(getParentStep(currentStep), true);
+                    }
                     // Update step status icon
                     updateStepStatusIcon();
                     lastLog.scrollIntoView({block: 'end', inline: 'end', behavior: 'smooth'});
