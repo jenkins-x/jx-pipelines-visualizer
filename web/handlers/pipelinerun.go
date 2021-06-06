@@ -10,9 +10,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/cloud/buckets"
-	"github.com/jenkins-x-plugins/jx-pipeline/pkg/pipelines"
 	"github.com/jenkins-x-plugins/jx-pipeline/pkg/tektonlog"
 	jxclientv1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/activities"
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 	"github.com/sirupsen/logrus"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
@@ -65,9 +65,9 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		owner  = pipelines.GetLabel(pr.Labels, pipelines.OwnerLabels)
-		repo   = pipelines.GetLabel(pr.Labels, pipelines.RepoLabels)
-		branch = pipelines.GetLabel(pr.Labels, pipelines.BranchLabels)
+		owner  = activities.GetLabel(pr.Labels, activities.OwnerLabels)
+		repo   = activities.GetLabel(pr.Labels, activities.RepoLabels)
+		branch = activities.GetLabel(pr.Labels, activities.BranchLabels)
 		build  = pr.Labels["build"]
 	)
 	if owner == "" || repo == "" || branch == "" || build == "" {
