@@ -176,13 +176,18 @@
             }
         }
 
+        let cssClass = 'step-line-hidden';
+        if (type === 'line-error') {
+            cssClass = 'step-line';
+        }
+
         const html = ansi_up.ansi_to_html(text)
 
         // Transform url to link element
         const transformedText = html.replace(/(https?:\/\/\S+)/g, '<a href="$1">$1</a>');
 
         return `
-        <tr id="logsL${lineNumber}" data-step="${currentStep}" data-is-parent-step="${containerId !== ''}" class="step-line-hidden">
+        <tr id="logsL${lineNumber}" data-step="${currentStep}" data-is-parent-step="${containerId !== ''}" class="${cssClass}">
             <td class="log-number" data-line-number="${lineNumber}"></td>
             <td class="log-dropdown-icon"></td>
             <td class="log-status-icon" data-status="${STEPS[containerId] ? STEPS[containerId].status : ''}"></td>
@@ -203,7 +208,7 @@
 
     const loadByBuildLogUrl = () => {
         const hostnameWithoutLogin = window.location.origin.replace(/\/\/[^@]*@/, '//');
-   
+
         fetch(`${hostnameWithoutLogin}${LOGS_URL}/logs`).then((response) => {
             if (response.status == 404) {
                 throw new Error('Archived logs not found in the long term storage');
