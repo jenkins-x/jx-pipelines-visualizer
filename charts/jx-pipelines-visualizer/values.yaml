@@ -118,6 +118,7 @@ role:
     - tekton.dev
     resources:
     - pipelineruns
+    - pipelines
     verbs:
     - list
     - watch
