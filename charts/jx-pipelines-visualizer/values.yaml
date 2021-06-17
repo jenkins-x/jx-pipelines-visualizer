@@ -137,3 +137,13 @@ role:
     - pods/log
     verbs:
     - get
+
+extraVolumes: []
+#  - name: config
+#    configMap:
+#      name: minio-certificate
+
+extraVolumeMounts: []
+#  - name: config
+#    mountPath: /config
+#    readOnly: true
