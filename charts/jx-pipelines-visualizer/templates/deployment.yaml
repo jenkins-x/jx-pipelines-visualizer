@@ -86,10 +86,15 @@ spec:
           httpGet:
             path: /healthz
             port: http
-        {{- if .Values.gitSecretName }}
+        {{- if or .Values.gitSecretName .Values.extraVolumes }}
         volumeMounts:
+        {{- if .Values.gitSecretName }}
         - mountPath: /secrets/git
           name: secrets-git
+        {{- end }}
+        {{- if .Values.extraVolumeMounts }}
+        {{ toYaml .Values.extraVolumeMounts | nindent 8 }}
+        {{- end }}
         {{- end }}
         {{- with .Values.pod.resources }}
         resources: {{- toYaml . | trim | nindent 10 }}
@@ -120,10 +125,15 @@ spec:
       {{- with .Values.pod.schedulerName }}
       schedulerName: {{ tpl . $ | trim }}
       {{- end }}
-      {{- if .Values.gitSecretName }}
+      {{- if or .Values.gitSecretName .Values.extraVolumes }}
       volumes:
+      {{- if .Values.gitSecretName }}
       - name: secrets-git
         secret:
           defaultMode: 420
           secretName: {{ .Values.gitSecretName }}
+      {{- end }}
+      {{- if .Values.extraVolumes }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
+      {{- end }}
       {{- end }}
