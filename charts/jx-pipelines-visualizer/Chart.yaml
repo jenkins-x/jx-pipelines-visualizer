@@ -3,7 +3,7 @@ name: jx-pipelines-visualizer
 description: Web UI for Jenkins X, with a clear goal - visualize the pipelines - and their logs.
 icon: https://raw.githubusercontent.com/jenkins-x/jenkins-x-website/master/images/logo/jenkinsx-icon-color.svg
 home: https://github.com/jenkins-x/jx-pipelines-visualizer
-version: 0.0.1
-appVersion: latest
+version: 1.7.0
+appVersion: 1.7.0
 sources:
-- https://github.com/jenkins-x/jx-pipelines-visualizer
+  - https://github.com/jenkins-x/jx-pipelines-visualizer
