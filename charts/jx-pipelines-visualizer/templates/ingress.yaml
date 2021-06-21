@@ -1,7 +1,7 @@
 {{- if .Values.ingress.enabled -}}
 
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: {{ .Values.ingress.apiVersion }}
 kind: Ingress
 metadata:
   name: {{ include "jxpipelines.fullname" . }}
@@ -21,6 +21,7 @@ metadata:
   {{- end }}
 spec:
   rules:
+{{- if eq .Values.ingress.apiVersion "networking.k8s.io/v1beta1" }}
   {{- range .Values.ingress.hosts }}
   - host: {{ tpl . $ }}
     http:
@@ -29,6 +30,20 @@ spec:
           serviceName: {{ include "jxpipelines.fullname" $ }}
           servicePort: http
   {{- end }}
+{{- else }}
+  {{- $pathType := .Values.ingress.pathType | default "ImplementationSpecific" -}}
+  {{- range .Values.ingress.hosts }}
+  - host: {{ tpl . $ }}
+    http:
+      paths:
+      - pathType: {{ $pathType }}
+        backend:
+          service:
+            name: {{ include "jxpipelines.fullname" $ }}
+            port:
+              name: http
+  {{- end }}
+{{- end }}
 
   {{- if .Values.ingress.tls.enabled }}
   tls:

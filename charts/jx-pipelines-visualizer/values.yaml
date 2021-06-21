@@ -64,6 +64,9 @@ ingress:
   labels: {}
   annotations: {}
 
+  apiVersion: "networking.k8s.io/v1beta1"
+  pathType: "ImplementationSpecific"
+
   # hosts:
   # - pipelines.example.com
   # - pipelines.foo.bar
