@@ -55,8 +55,8 @@ In the Git repository for your dev environment:
 - Update the `env/requirements.yaml` file with the following:
   ```
   - name: jx-pipelines-visualizer
-    repository: https://storage.googleapis.com/jenkinsxio/charts/
-    version: 0.0.30
+    repository: https://jenkins-x-charts.github.io/repo
+    version: 1.7.2
   ```
 - Create a new file `env/jx-pipelines-visualizer/values.tmpl.yaml` with the following content:
   ```
@@ -103,14 +103,14 @@ In the Git repository for your dev environment:
 ### With Helm v3
 
 ```
-$ helm repo add jx https://storage.googleapis.com/jenkinsxio/charts/
+$ helm repo add jx https://jenkins-x-charts.github.io/repo
 $ helm install jx-pipelines-visualizer jx/jx-pipelines-Visualizer
 ```
 
 ### With Helm v2
 
 ```
-$ helm repo add jx https://storage.googleapis.com/jenkinsxio/charts/
+$ helm repo add jx https://jenkins-x-charts.github.io/repo
 $ helm repo update
 $ helm install --name jx-pipelines-visualizer jx/jx-pipelines-visualizer
 ```
