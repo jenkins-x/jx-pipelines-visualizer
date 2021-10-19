@@ -42,10 +42,9 @@ spec:
             name: {{ include "jxpipelines.fullname" $ }}
             port:
               name: http
-        {{- if eq .Values.ingress.pathType "Prefix" -}}
-        path: {{- .Values.ingress.path | default "/" -}}
-        {{- else }}
-        {{- end -}}
+        {{- if eq .Values.ingress.pathType "Prefix" }}
+        path: {{ .Values.ingress.path | default "/" }}
+        {{- end }}
   {{- end }}
 {{- end }}
 
