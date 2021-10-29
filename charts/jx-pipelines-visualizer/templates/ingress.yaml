@@ -32,6 +32,7 @@ spec:
   {{- end }}
 {{- else }}
   {{- $pathType := .Values.ingress.pathType | default "ImplementationSpecific" -}}
+  {{- $path  := .Values.ingress.path -}}
   {{- range .Values.ingress.hosts }}
   - host: {{ tpl . $ }}
     http:
@@ -42,8 +43,8 @@ spec:
             name: {{ include "jxpipelines.fullname" $ }}
             port:
               name: http
-        {{- if eq .Values.ingress.pathType "Prefix" }}
-        path: {{ .Values.ingress.path | default "/" }}
+        {{- if eq $pathType "Prefix" }}
+        path: {{ $path | default "/" }}
         {{- end }}
   {{- end }}
 {{- end }}
