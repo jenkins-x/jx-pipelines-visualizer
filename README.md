@@ -129,6 +129,13 @@ See the [values.yaml](charts/jx-pipelines-visualizer/values.yaml) file for the c
 
 If you are not using the Helm Chart, the binary is using CLI flags only - no config files. You can run `jx-pipelines-visualizer -h` to see all the flags.
 
+### Changing password
+To change password for pipeline visualizer, you have to change it in two secrets in your Vault of choice:
+* `jx-basic-auth-user` - update json with your new password
+* `jx-basic-auth-htpasswd` - you need to generate new htpasswd from the same password as you entered in previous step, see:
+https://kubernetes.github.io/ingress-nginx/examples/auth/basic/#create-htpasswd-file and then update the content of the secret with it, (format is somehting like `admin:alfa.beta.gama`)
+
+
 ## Running locally
 
 ```
