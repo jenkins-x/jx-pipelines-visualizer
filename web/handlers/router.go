@@ -192,14 +192,14 @@ func (r Router) Handler() (http.Handler, error) {
 	})
 
 	router.Handle("/ns-{namespace}/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
-		PAInterfaceFactory:   r.PAInterfaceFactory, // todo
+		PAInterfaceFactory:   r.PAInterfaceFactory,
 		DefaultJXNamespace:   r.DefaultJXNamespace,
 		BuildLogsURLTemplate: archivedLogsURLTemplate,
 		Logger:               r.Logger,
 	})
 
 	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
-		PAInterfaceFactory:   r.PAInterfaceFactory, // todo
+		PAInterfaceFactory:   r.PAInterfaceFactory,
 		DefaultJXNamespace:   r.DefaultJXNamespace,
 		BuildLogsURLTemplate: archivedLogsURLTemplate,
 		Logger:               r.Logger,
@@ -226,7 +226,7 @@ func (r Router) Handler() (http.Handler, error) {
 	router.Handle("/namespaces/{namespace}/pipelineruns/{pipelineRun}", &PipelineRunHandler{
 		TektonClient:                  tknClient,
 		StoredPipelineRunsURLTemplate: archivedPipelineRunsURLTemplate,
-		Namespace:                     r.Namespace, // todo?
+		Namespace:                     r.Namespace,
 		Store:                         r.Store,
 		Render:                        r.render,
 		Logger:                        r.Logger,
