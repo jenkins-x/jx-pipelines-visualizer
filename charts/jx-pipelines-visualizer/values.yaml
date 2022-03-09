@@ -13,6 +13,8 @@ config:
   archivedPipelineRunsURLTemplate:
   # https://GRAFANA_URL/explore?left=%5B%22now%22,%22now%22,%22Tempo%22,%7B%22query%22:%22{{.TraceID}}%22%7D%5D
   pipelineTraceURLTemplate:
+
+  # Set a fixed namespace if the visualizer should show pipelines only from selected namespace
   #namespace: jx
   resyncInterval: 60s
   logLevel: INFO

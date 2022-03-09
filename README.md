@@ -13,6 +13,7 @@ This is a Web UI for [Jenkins X](https://jenkins-x.io/), with a clear goal: **vi
 - Read-only: only requires READ permissions on the Jenkins X and Tekton Pipelines CRDs
 - Expose a [Shields.io](https://shields.io/) compatible [endpoint](https://shields.io/endpoint)
 - Backward-compatible URLs with the old "JX UI" - so that you can easily swap the JXUI URL for the jx-pipelines-visualizer one in the Lighthouse config, and have Lighthouse set links to jx-pipelines-visualizer in GitHub Pull Requests.
+- Work in context of a single namespace or in a cluster context
 
 ### Screenshots
 
