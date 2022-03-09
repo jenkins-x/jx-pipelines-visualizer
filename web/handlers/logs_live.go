@@ -23,12 +23,13 @@ import (
 )
 
 type LiveLogsHandler struct {
-	JXClient     jxclient.Interface
-	TektonClient tknclient.Interface
-	KubeClient   kubernetes.Interface
-	Namespace    string
-	Broker       *sse.Broker
-	Logger       *logrus.Logger
+	JXClient           jxclient.Interface
+	TektonClient       tknclient.Interface
+	DefaultJXNamespace string
+	KubeClient         kubernetes.Interface
+	Namespace          string
+	Broker             *sse.Broker
+	Logger             *logrus.Logger
 }
 
 func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -40,11 +41,15 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		branch = strings.ToUpper(branch)
 	}
 	build := vars["build"]
+	namespace := vars["namespace"]
+	if namespace == "" {
+		namespace = h.DefaultJXNamespace
+	}
 
 	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
-	pa, err := h.JXClient.JenkinsV1().PipelineActivities(h.Namespace).Get(ctx, name, metav1.GetOptions{})
+	pa, err := h.JXClient.JenkinsV1().PipelineActivities(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			http.NotFound(w, r)
@@ -55,7 +60,7 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	prBuild := getPipelineRunBuild(pa, build)
-	pipelineruns, labelSelector, err := h.getPipelineRuns(ctx, owner, repo, branch, prBuild)
+	pipelineruns, labelSelector, err := h.getPipelineRuns(ctx, owner, repo, branch, prBuild, namespace)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,7 +80,7 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		KubeClient:   h.KubeClient,
 		JXClient:     h.JXClient,
 		TektonClient: h.TektonClient,
-		Namespace:    h.Namespace,
+		Namespace:    namespace,
 	}
 	for logLine := range logger.GetRunningBuildLogs(ctx, pa, pipelineruns, name) {
 		h.send(r.Context(), clientConnection, "log", logLine.Line)
@@ -83,7 +88,7 @@ func (h *LiveLogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if err := logger.Err(); err == nil && len(pipelineruns) == 1 && pipelineruns[0].Labels["jenkins.io/pipelineType"] == "meta" {
 		// if we started with only the meta-pipeline, let's now retry with the "real" build pipeline
-		pipelineruns, _, _ = h.getPipelineRuns(ctx, owner, repo, branch, build, "jenkins.io/pipelineType=build")
+		pipelineruns, _, _ = h.getPipelineRuns(ctx, owner, repo, branch, build, namespace, "jenkins.io/pipelineType=build")
 		if len(pipelineruns) > 0 {
 			for logLine := range logger.GetRunningBuildLogs(ctx, pa, pipelineruns, name) {
 				h.send(r.Context(), clientConnection, "log", logLine.Line)
@@ -130,7 +135,7 @@ func (h *LiveLogsHandler) send(ctx context.Context, clientConnection *sse.Client
 	}
 }
 
-func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, branch, build string, extraSelectors ...string) ([]*tknv1beta1.PipelineRun, string, error) {
+func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, branch, build string, namespace string, extraSelectors ...string) ([]*tknv1beta1.PipelineRun, string, error) {
 	var extraLabelSet labels.Set
 	for _, extraSelector := range extraSelectors {
 		labelSet, err := labels.ConvertSelectorToLabelsMap(extraSelector)
@@ -147,7 +152,7 @@ func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, bran
 		"lighthouse.jenkins-x.io/buildNum":  build,
 	})
 	labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
-	prList, err := h.TektonClient.TektonV1beta1().PipelineRuns(h.Namespace).List(ctx, metav1.ListOptions{
+	prList, err := h.TektonClient.TektonV1beta1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
 		LabelSelector: labelSelector,
 	})
 	if err != nil {
@@ -163,7 +168,7 @@ func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, bran
 			"build":      build,
 		})
 		labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
-		prList, err = h.TektonClient.TektonV1beta1().PipelineRuns(h.Namespace).List(ctx, metav1.ListOptions{
+		prList, err = h.TektonClient.TektonV1beta1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
 			LabelSelector: labelSelector,
 		})
 		if err != nil {

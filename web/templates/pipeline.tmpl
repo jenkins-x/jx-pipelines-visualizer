@@ -6,7 +6,7 @@
 {{ define "js-pipeline" }}
     <script type="text/javascript">
         BUILD_LOG_URL = "{{.Pipeline.Spec.BuildLogsURL}}";
-        LOGS_URL = "/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}";
+        LOGS_URL = "/ns-{{.Pipeline.Namespace}}/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}";
         ARCHIVE = false;
         STEPS = {
             {{- range $pipeStep := .Pipeline.Spec.Steps -}}
@@ -76,6 +76,10 @@
                         <span>{{ .Pipeline.Name }}</span>
                     </li>
                     <li>
+                        <span class="title">Namespace</span>
+                        <span>{{ .Pipeline.Namespace }}</span>
+                    </li>
+                    <li>
                         <span class="title">Context</span>
                         <span>{{ .Pipeline.Spec.Context }}</span>
                     </li>
@@ -86,7 +90,7 @@
                     <li>
                         <span class="title">YAML</span>
                         <span>
-                            <a href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}.yaml" target="_blank">View raw YAML</a>
+                            <a href="/ns-{{.Pipeline.Namespace}}/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}.yaml" target="_blank">View raw YAML</a>
                         </span>
                     </li>
                 </ul>
@@ -342,7 +346,7 @@
         </div>
         <div class="raw-logs-options">
             <button class="option-button" id="toggle-steps">Toggle Steps</button>
-            <a class="option-button" href="/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
+            <a class="option-button" href="/ns-{{.Pipeline.Namespace}}/{{.Pipeline.Spec.GitOwner}}/{{.Pipeline.Spec.GitRepository}}/{{.Pipeline.Spec.GitBranch}}/{{.Pipeline.Spec.Build}}/logs" target="_blank">View raw logs</a>
             <a class="option-button" id="downloadLogs" download="{{.Pipeline.Spec.GitOwner}}-{{.Pipeline.Spec.GitRepository}}-{{.Pipeline.Spec.GitBranch}}-{{.Pipeline.Spec.Build}}.txt">Download raw logs</a>
         </div>
     </div>

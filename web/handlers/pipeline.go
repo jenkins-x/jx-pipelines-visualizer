@@ -22,7 +22,8 @@ import (
 )
 
 type PipelineHandler struct {
-	PAInterface                jxclientv1.PipelineActivityInterface
+	PAInterfaceFactory         func(namespace string) jxclientv1.PipelineActivityInterface
+	DefaultJXNamespace         string
 	BuildLogsURLTemplate       *template.Template
 	StoredPipelinesURLTemplate *template.Template
 	RenderYAML                 bool
@@ -35,6 +36,12 @@ func (h *PipelineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	owner := vars["owner"]
 	repo := vars["repo"]
 	branch := vars["branch"]
+	namespace := vars["namespace"]
+
+	if namespace == "" {
+		namespace = h.DefaultJXNamespace
+	}
+
 	if strings.HasPrefix(branch, "pr-") {
 		branch = strings.ToUpper(branch)
 	}
@@ -43,7 +50,8 @@ func (h *PipelineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
-	pa, err := h.PAInterface.Get(ctx, name, metav1.GetOptions{})
+	pa, err := h.PAInterfaceFactory(namespace).Get(ctx, name, metav1.GetOptions{})
+
 	if err != nil && !errors.IsNotFound(err) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

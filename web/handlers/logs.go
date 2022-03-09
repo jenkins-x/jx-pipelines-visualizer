@@ -19,7 +19,8 @@ import (
 )
 
 type LogsHandler struct {
-	PAInterface          jxclientv1.PipelineActivityInterface
+	PAInterfaceFactory   func(namespace string) jxclientv1.PipelineActivityInterface
+	DefaultJXNamespace   string
 	BuildLogsURLTemplate *template.Template
 	Logger               *logrus.Logger
 }
@@ -33,12 +34,16 @@ func (h *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		branch = strings.ToUpper(branch)
 	}
 	build := vars["build"]
+	namespace := vars["namespace"]
+	if namespace == "" {
+		namespace = h.DefaultJXNamespace
+	}
 
 	name := naming.ToValidName(fmt.Sprintf("%s-%s-%s-%s", owner, repo, branch, build))
 
 	ctx := context.Background()
 	var buildLogsURL string
-	pa, err := h.PAInterface.Get(ctx, name, metav1.GetOptions{})
+	pa, err := h.PAInterfaceFactory(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
