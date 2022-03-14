@@ -27,8 +27,9 @@ type Router struct {
 	Store                           *visualizer.Store
 	RunningPipelines                *visualizer.RunningPipelines
 	KConfig                         *rest.Config
-	PAInterface                     jenkinsv1.PipelineActivityInterface
+	PAInterfaceFactory              func(namespace string) jenkinsv1.PipelineActivityInterface
 	Namespace                       string
+	DefaultJXNamespace              string
 	ArchivedLogsURLTemplate         string
 	ArchivedPipelinesURLTemplate    string
 	ArchivedPipelineRunsURLTemplate string
@@ -152,16 +153,27 @@ func (r Router) Handler() (http.Handler, error) {
 		Logger: r.Logger,
 	})
 
-	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
-		PAInterface:                r.PAInterface,
+	router.Handle("/ns-{namespace}/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
+		PAInterfaceFactory:         r.PAInterfaceFactory,
+		DefaultJXNamespace:         r.DefaultJXNamespace,
 		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
 		BuildLogsURLTemplate:       archivedLogsURLTemplate,
 		Render:                     r.render,
 		Logger:                     r.Logger,
 	})
 
-	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}.yaml", &PipelineHandler{
-		PAInterface:                r.PAInterface,
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}", &PipelineHandler{
+		PAInterfaceFactory:         r.PAInterfaceFactory,
+		DefaultJXNamespace:         r.DefaultJXNamespace,
+		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
+		BuildLogsURLTemplate:       archivedLogsURLTemplate,
+		Render:                     r.render,
+		Logger:                     r.Logger,
+	})
+
+	router.Handle("/ns-{namespace}/{owner}/{repo}/{branch}/{build:[0-9]+}.yaml", &PipelineHandler{
+		PAInterfaceFactory:         r.PAInterfaceFactory,
+		DefaultJXNamespace:         r.DefaultJXNamespace,
 		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
 		BuildLogsURLTemplate:       archivedLogsURLTemplate,
 		RenderYAML:                 true,
@@ -169,24 +181,51 @@ func (r Router) Handler() (http.Handler, error) {
 		Logger:                     r.Logger,
 	})
 
-	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
-		PAInterface:          r.PAInterface,
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}.yaml", &PipelineHandler{
+		PAInterfaceFactory:         r.PAInterfaceFactory,
+		DefaultJXNamespace:         r.DefaultJXNamespace,
+		StoredPipelinesURLTemplate: archivedPipelinesURLTemplate,
+		BuildLogsURLTemplate:       archivedLogsURLTemplate,
+		RenderYAML:                 true,
+		Render:                     r.render,
+		Logger:                     r.Logger,
+	})
+
+	router.Handle("/ns-{namespace}/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
+		PAInterfaceFactory:   r.PAInterfaceFactory,
+		DefaultJXNamespace:   r.DefaultJXNamespace,
 		BuildLogsURLTemplate: archivedLogsURLTemplate,
 		Logger:               r.Logger,
 	})
 
+	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs", &LogsHandler{
+		PAInterfaceFactory:   r.PAInterfaceFactory,
+		DefaultJXNamespace:   r.DefaultJXNamespace,
+		BuildLogsURLTemplate: archivedLogsURLTemplate,
+		Logger:               r.Logger,
+	})
+
+	router.Handle("/ns-{namespace}/{owner}/{repo}/{branch}/{build:[0-9]+}/logs/live", &LiveLogsHandler{
+		DefaultJXNamespace: r.DefaultJXNamespace,
+		KubeClient:         kClient,
+		JXClient:           jxClient,
+		TektonClient:       tknClient,
+		Broker:             sse.NewBroker(nil),
+		Logger:             r.Logger,
+	})
+
 	router.Handle("/{owner}/{repo}/{branch}/{build:[0-9]+}/logs/live", &LiveLogsHandler{
-		KubeClient:   kClient,
-		JXClient:     jxClient,
-		TektonClient: tknClient,
-		Namespace:    r.Namespace,
-		Broker:       sse.NewBroker(nil),
-		Logger:       r.Logger,
+		DefaultJXNamespace: r.DefaultJXNamespace,
+		KubeClient:         kClient,
+		JXClient:           jxClient,
+		TektonClient:       tknClient,
+		Broker:             sse.NewBroker(nil),
+		Logger:             r.Logger,
 	})
 
 	router.Handle("/namespaces/{namespace}/pipelineruns/{pipelineRun}", &PipelineRunHandler{
+		PAInterfaceFactory:            r.PAInterfaceFactory,
 		TektonClient:                  tknClient,
-		PAInterface:                   r.PAInterface,
 		StoredPipelineRunsURLTemplate: archivedPipelineRunsURLTemplate,
 		Namespace:                     r.Namespace,
 		Store:                         r.Store,

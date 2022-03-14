@@ -9,6 +9,7 @@ import (
 
 type Pipeline struct {
 	Name            string
+	Namespace       string
 	Provider        string
 	Owner           string
 	Repository      string
@@ -23,6 +24,7 @@ type Pipeline struct {
 	Start           time.Time
 	End             time.Time
 	Duration        time.Duration
+	GitUrl          string
 }
 
 func (p Pipeline) PullRequestNumber() string {
@@ -46,6 +48,8 @@ func PipelineFromPipelineActivity(pa *jenkinsv1.PipelineActivity) Pipeline {
 		Commit:          pa.Spec.LastCommitSHA,
 		Status:          string(pa.Spec.Status),
 		Description:     pa.Annotations["description"],
+		Namespace:       pa.Namespace,
+		GitUrl:          strings.TrimSuffix(pa.Spec.GitURL, ".git"),
 	}
 	if pa.Spec.StartedTimestamp != nil {
 		p.Start = pa.Spec.StartedTimestamp.Time

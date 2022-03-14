@@ -163,7 +163,7 @@
                     </span>
                     {{- end -}}
                 </td>
-                <td><a href="/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a></td>
+                <td><a href="/ns-{{ .Namespace }}/{{ .Owner }}/{{ .Repository }}/{{ .Branch }}/{{ .Build }}">{{ .Build }}</a></td>
                 <td>{{ .Context }}</td>
                 <td class="status-{{ lower .Status }}" title="{{ .Description }}">{{ .Status }}</td>
                 <td data-order='{{ .Start.Format "2006-01-02 15:04:05" }}'>

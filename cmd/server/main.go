@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	v1 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/typed/jenkins.io/v1"
 	"net/http"
 	"time"
 
@@ -20,6 +21,7 @@ import (
 var (
 	options struct {
 		namespace                       string
+		defaultJXNamespace              string
 		resyncInterval                  time.Duration
 		archivedLogsURLTemplate         string
 		archivedPipelinesURLTemplate    string
@@ -33,7 +35,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&options.namespace, "namespace", "jx", "Name of the jx namespace")
+	flag.StringVar(&options.namespace, "namespace", "", "Name of the jx namespace")
+	flag.StringVar(&options.defaultJXNamespace, "default-jx-namespace", "jx", "Default Jenkins X installation namespace")
 	flag.DurationVar(&options.resyncInterval, "resync-interval", 1*time.Minute, "Resync interval between full re-list operations")
 	flag.StringVar(&options.archivedLogsURLTemplate, "archived-logs-url-template", "", "Go template string used to build the archived logs URL")
 	flag.StringVar(&options.archivedPipelinesURLTemplate, "archived-pipelines-url-template", "", "Go template string used to build the archived pipelines URL")
@@ -92,11 +95,14 @@ func main() {
 	}).Start(ctx)
 
 	handler, err := handlers.Router{
-		Store:                           store,
-		RunningPipelines:                runningPipelines,
-		KConfig:                         kClient.Config,
-		PAInterface:                     jxClient.JenkinsV1().PipelineActivities(options.namespace),
+		Store:            store,
+		RunningPipelines: runningPipelines,
+		KConfig:          kClient.Config,
+		PAInterfaceFactory: func(namespace string) v1.PipelineActivityInterface {
+			return jxClient.JenkinsV1().PipelineActivities(namespace)
+		},
 		Namespace:                       options.namespace,
+		DefaultJXNamespace:              options.defaultJXNamespace,
 		ArchivedLogsURLTemplate:         options.archivedLogsURLTemplate,
 		ArchivedPipelinesURLTemplate:    options.archivedPipelinesURLTemplate,
 		ArchivedPipelineRunsURLTemplate: options.archivedPipelineRunsURLTemplate,

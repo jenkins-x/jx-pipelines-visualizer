@@ -24,8 +24,8 @@ import (
 )
 
 type PipelineRunHandler struct {
+	PAInterfaceFactory            func(namespace string) jxclientv1.PipelineActivityInterface
 	TektonClient                  tknclient.Interface
-	PAInterface                   jxclientv1.PipelineActivityInterface
 	StoredPipelineRunsURLTemplate *template.Template
 	Namespace                     string
 	Store                         *visualizer.Store
@@ -71,7 +71,7 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		build  = pr.Labels["build"]
 	)
 	if owner == "" || repo == "" || branch == "" || build == "" {
-		pa, err := tektonlog.GetPipelineActivityForPipelineRun(context.TODO(), h.PAInterface, pr)
+		pa, err := tektonlog.GetPipelineActivityForPipelineRun(context.TODO(), h.PAInterfaceFactory(pr.Namespace), pr)
 		if err != nil && !errors.IsNotFound(err) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -86,7 +86,7 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		build = pa.Spec.Build
 	}
 
-	redirectURL := fmt.Sprintf("/%s/%s/%s/%s", owner, repo, branch, build)
+	redirectURL := fmt.Sprintf("/ns-%s/%s/%s/%s/%s", ns, owner, repo, branch, build)
 	http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
 }
 
