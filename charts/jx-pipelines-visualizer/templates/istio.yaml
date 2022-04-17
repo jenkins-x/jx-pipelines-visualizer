@@ -5,7 +5,11 @@ metadata:
   name: {{ include "jxpipelines.fullname" $ }}
 spec:
   gateways:
-  - {{ .Values.istio.gateway }}
+{{- if .Values.istio.createGateway }}
+  - jx-gateway
+{{- else }}
+  - {{ .Values.istio.gateway.name }}
+{{- end }}
   hosts:
   - dashboard{{ .Values.jxRequirements.ingress.namespaceSubDomain }}{{ .Values.jxRequirements.ingress.domain }}
   http:
