@@ -197,6 +197,9 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	// override the go-scm from tekton
 	github.com/jenkins-x/go-scm => github.com/jenkins-x/go-scm v1.11.9
+	github.com/json-iterator/go => github.com/json-iterator/go v1.1.12
+	// See: https://github.com/google/go-cloud/issues/3114
+	github.com/mattn/go-ieproxy => github.com/mattn/go-ieproxy v0.0.1
 	k8s.io/cli-runtime => k8s.io/cli-runtime v0.21.4
 	k8s.io/client-go => k8s.io/client-go v0.21.4
 )
