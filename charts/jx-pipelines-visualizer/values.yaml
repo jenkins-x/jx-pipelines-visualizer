@@ -98,7 +98,9 @@ ingress:
 istio:
   enabled: false
   apiVersion: networking.istio.io/v1beta1
-  gateway: jx-gateway
+  gateway:
+    name: jx-gateway
+  createGateway: false
 
 jx:
   # whether to create a Release CRD when installing charts with Release CRDs included
