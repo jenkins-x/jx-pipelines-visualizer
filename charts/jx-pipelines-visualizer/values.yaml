@@ -34,10 +34,10 @@ deployment:
 pod:
   resources:
     requests:
-      cpu: "0.2"
-      memory: 128M
-    limits:
       cpu: "1"
+      memory: 1Gi
+    limits:
+      cpu: 500m
       memory: 512M
   labels: {}
   annotations: {}
