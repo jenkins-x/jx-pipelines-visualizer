@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/blevesearch/bleve"
-	"github.com/blevesearch/bleve/analysis/analyzer/keyword"
-	"github.com/blevesearch/bleve/search"
-	"github.com/blevesearch/bleve/search/query"
+	"github.com/blevesearch/bleve/v2"
+	"github.com/blevesearch/bleve/v2/analysis/analyzer/keyword"
+	"github.com/blevesearch/bleve/v2/search"
+	"github.com/blevesearch/bleve/v2/search/query"
 )
 
 type Store struct {
@@ -133,7 +133,7 @@ func bleveResultToPipelines(result *bleve.SearchResult) Pipelines {
 
 	for _, facet := range result.Facets {
 		counts := map[string]int{}
-		for _, term := range facet.Terms {
+		for _, term := range facet.Terms.Terms() {
 			counts[term.Term] = term.Count
 		}
 		for _, numericRange := range facet.NumericRanges {

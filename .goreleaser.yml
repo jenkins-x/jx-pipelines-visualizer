@@ -1,3 +1,4 @@
+version: 2
 env:
   - GO111MODULE=on
   - CGO_ENABLED=0
@@ -34,8 +35,10 @@ builds:
     # Defaults are 386 and amd64.
     goarch:
       - amd64
-      - arm
       - arm64
+    ignore:
+    - goos: windows
+      goarch: arm64
 
 archives:
   - name_template: "jx-pipelines-visualizer-{{ .Os }}-{{ .Arch }}"
@@ -55,7 +58,7 @@ checksum:
 
 changelog:
   # set it to true if you wish to skip the changelog generation
-  skip: true
+  disable: true
 
 release:
   # If set to true, will not auto-publish the release.
