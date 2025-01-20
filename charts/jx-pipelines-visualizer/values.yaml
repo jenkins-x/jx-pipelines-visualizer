@@ -3,7 +3,6 @@
 fullnameOverride:
 nameOverride:
 gitSecretName: tekton-git
-
 config:
   # gs://BUCKET_NAME/jenkins-x/logs/{{.Owner}}/{{.Repository}}/{{if hasPrefix .Branch \"pr\"}}{{.Branch | upper}}{{else}}{{.Branch}}{{end}}/{{.Build}}.log
   archivedLogsURLTemplate:
@@ -13,24 +12,20 @@ config:
   archivedPipelineRunsURLTemplate:
   # https://GRAFANA_URL/explore?left=%5B%22now%22,%22now%22,%22Tempo%22,%7B%22query%22:%22{{.TraceID}}%22%7D%5D
   pipelineTraceURLTemplate:
-
   # Set a fixed namespace if the visualizer should show pipelines only from selected namespace
   #namespace: jx
   resyncInterval: 60s
   logLevel: INFO
-
 image:
-  repository: gcr.io/jenkinsxio/jx-pipelines-visualizer
+  repository: ghcr.io/jenkins-x/jx-pipelines-visualizer
   # If no tag, fallback to the Chart's AppVersion
-  tag:
+  tag: 1.8.3
   pullPolicy:
-
 deployment:
   replicas: 1
   revisionHistoryLimit: 2
   labels: {}
   annotations: {}
-
 pod:
   resources:
     requests:
@@ -59,30 +54,24 @@ service:
   loadBalancerIP:
   labels: {}
   annotations: {}
-
 ingress:
   enabled: false
   class: nginx
   labels: {}
   annotations: {}
-
   apiVersion: "networking.k8s.io/v1beta1"
   pathType: "ImplementationSpecific"
   path: ""
-
   # hosts:
   # - pipelines.example.com
   # - pipelines.foo.bar
   hosts: []
-
   # enables basic auth secret to be created
   basicAuth:
     enabled: false
     authData: ""
-
   tls:
     enabled: false
-
     # secrets:
     #   embedded:
     #     b64encodedCertificate: e30k
@@ -94,21 +83,17 @@ ingress:
     #     hosts:
     #     - pipelines.foo.bar 
     secrets: {}
-
 istio:
   enabled: false
   apiVersion: networking.istio.io/v1beta1
   gateway: jx-gateway
-
 jx:
   # whether to create a Release CRD when installing charts with Release CRDs included
   releaseCRD: true
-  
 serviceAccount:
   # allow additional annotations to be added to the ServiceAccount
   # such as for workload identity on clouds
   annotations: {}
-
 role:
   rules:
   - apiGroups:
@@ -143,7 +128,6 @@ role:
     - pods/log
     verbs:
     - get
-
 extraVolumes: []
 #  - name: config
 #    configMap:
