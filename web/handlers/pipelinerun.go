@@ -15,7 +15,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/activities"
 	visualizer "github.com/jenkins-x/jx-pipelines-visualizer"
 	"github.com/sirupsen/logrus"
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+	tknv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"github.com/unrolled/render"
 	"gopkg.in/yaml.v2"
@@ -42,7 +42,7 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	pr, err := h.TektonClient.TektonV1beta1().PipelineRuns(ns).Get(ctx, pipelineRunName, metav1.GetOptions{})
+	pr, err := h.TektonClient.TektonV1().PipelineRuns(ns).Get(ctx, pipelineRunName, metav1.GetOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,7 +90,7 @@ func (h *PipelineRunHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
 }
 
-func (h *PipelineRunHandler) loadPipelineRunFromStorage(ctx context.Context, namespace, name string) (*v1beta1.PipelineRun, error) {
+func (h *PipelineRunHandler) loadPipelineRunFromStorage(ctx context.Context, namespace, name string) (*tknv1.PipelineRun, error) {
 	storedPipelineRunURL, err := h.storedPipelineRunURL(namespace, name)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (h *PipelineRunHandler) loadPipelineRunFromStorage(ctx context.Context, nam
 	}
 	defer reader.Close()
 
-	var pr v1beta1.PipelineRun
+	var pr tknv1.PipelineRun
 	err = yaml.NewDecoder(reader).Decode(&pr)
 	if err != nil {
 		return nil, err
