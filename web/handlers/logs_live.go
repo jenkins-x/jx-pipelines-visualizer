@@ -14,7 +14,7 @@ import (
 	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 	sse "github.com/subchord/go-sse"
-	tknv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+	tknv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -135,7 +135,7 @@ func (h *LiveLogsHandler) send(ctx context.Context, clientConnection *sse.Client
 	}
 }
 
-func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, branch, build string, namespace string, extraSelectors ...string) ([]*tknv1beta1.PipelineRun, string, error) {
+func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, branch, build string, namespace string, extraSelectors ...string) ([]*tknv1.PipelineRun, string, error) {
 	var extraLabelSet labels.Set
 	for _, extraSelector := range extraSelectors {
 		labelSet, err := labels.ConvertSelectorToLabelsMap(extraSelector)
@@ -152,7 +152,7 @@ func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, bran
 		"lighthouse.jenkins-x.io/buildNum":  build,
 	})
 	labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
-	prList, err := h.TektonClient.TektonV1beta1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
+	prList, err := h.TektonClient.TektonV1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
 		LabelSelector: labelSelector,
 	})
 	if err != nil {
@@ -168,7 +168,7 @@ func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, bran
 			"build":      build,
 		})
 		labelSelector := labels.FormatLabels(labels.Merge(extraLabelSet, labelSet))
-		prList, err = h.TektonClient.TektonV1beta1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
+		prList, err = h.TektonClient.TektonV1().PipelineRuns(namespace).List(ctx, metav1.ListOptions{
 			LabelSelector: labelSelector,
 		})
 		if err != nil {
@@ -176,7 +176,7 @@ func (h *LiveLogsHandler) getPipelineRuns(ctx context.Context, owner, repo, bran
 		}
 	}
 
-	prs := make([]*tknv1beta1.PipelineRun, 0, len(prList.Items))
+	prs := make([]*tknv1.PipelineRun, 0, len(prList.Items))
 	for i := range prList.Items {
 		prs = append(prs, &prList.Items[i])
 	}
