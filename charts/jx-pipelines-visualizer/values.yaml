@@ -125,6 +125,8 @@ role:
     resources:
     - pipelineruns
     - pipelines
+    - taskruns
+    - tasks
     verbs:
     - list
     - watch
