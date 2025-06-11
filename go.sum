@@ -413,8 +413,8 @@ github.com/huandu/xstrings v1.5.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.23 h1:18FRQepxkgR/GgZcBiXdLn79+h6Su9Zd38DkcYZuypQ=
-github.com/jenkins-x-plugins/jx-pipeline v0.7.23/go.mod h1:16kneJ0KS4C6ulNhIyPlRIBBCiItkdUyzrsWhvCtXyM=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.25 h1:sXFuReb8wayVjnijzot+hROoWf6/DbteX17DQCUEdF0=
+github.com/jenkins-x-plugins/jx-pipeline v0.7.25/go.mod h1:16kneJ0KS4C6ulNhIyPlRIBBCiItkdUyzrsWhvCtXyM=
 github.com/jenkins-x/go-scm v1.14.58 h1:R7ZxZySGkvz7UxPdvAeQxUy9esUwrrseSPoTbxmXNt8=
 github.com/jenkins-x/go-scm v1.14.58/go.mod h1:1RPxLZndnvu31XhFZ+RTvXiHmMX70HkQ17bRupTQxGs=
 github.com/jenkins-x/jx-api/v4 v4.8.0 h1:JSQSRdVZNeWc5RKlVDU+tde+G8np3mP8cmmZq4eFQeU=
