@@ -4,7 +4,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/blevesearch/bleve/v2 v2.4.4
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.23
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.25
 	github.com/jenkins-x/jx-api/v4 v4.8.0
 	github.com/jenkins-x/jx-helpers/v3 v3.9.6
 	github.com/mitchellh/go-homedir v1.1.0
