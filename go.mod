@@ -4,9 +4,9 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/blevesearch/bleve/v2 v2.4.4
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.28
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.29
 	github.com/jenkins-x/jx-api/v4 v4.8.1
-	github.com/jenkins-x/jx-helpers/v3 v3.9.6
+	github.com/jenkins-x/jx-helpers/v3 v3.9.7
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rickb777/date v1.21.1
 	github.com/rs/xid v1.6.0
@@ -16,9 +16,9 @@ require (
 	github.com/unrolled/render v1.7.0
 	github.com/urfave/negroni/v2 v2.0.2
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.32.5
+	k8s.io/apimachinery v0.33.2
 	k8s.io/cli-runtime v0.32.1
-	k8s.io/client-go v0.32.5
+	k8s.io/client-go v0.33.2
 )
 
 require (
@@ -132,7 +132,6 @@ require (
 	github.com/google/cel-go v0.25.0 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/google/wire v0.6.0 // indirect
@@ -145,9 +144,9 @@ require (
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jenkins-x/go-scm v1.14.59 // indirect
+	github.com/jenkins-x/go-scm v1.15.1 // indirect
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.8 // indirect
-	github.com/jenkins-x/jx-logging/v3 v3.0.17 // indirect
+	github.com/jenkins-x/jx-logging/v3 v3.1.0 // indirect
 	github.com/jenkins-x/lighthouse v1.24.2 // indirect
 	github.com/jenkins-x/logrus-stackdriver-formatter v0.2.7 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -212,10 +211,10 @@ require (
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240716161551-93cc26a95ae9 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
@@ -230,13 +229,14 @@ require (
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.32.5 // indirect
+	k8s.io/api v0.33.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20241212222426-2c72e554b1e7 // indirect
+	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/utils v0.0.0-20241210054802-24370beab758 // indirect
 	knative.dev/pkg v0.0.0-20250415155312-ed3e2158b883 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.5.0 // indirect
+	sigs.k8s.io/randfill v1.0.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
