@@ -4,7 +4,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/blevesearch/bleve/v2 v2.4.4
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.30
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.31
 	github.com/jenkins-x/jx-api/v4 v4.8.1
 	github.com/jenkins-x/jx-helpers/v3 v3.9.8
 	github.com/mitchellh/go-homedir v1.1.0
@@ -146,7 +146,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jenkins-x/go-scm v1.15.1 // indirect
 	github.com/jenkins-x/jx-kube-client/v3 v3.0.8 // indirect
-	github.com/jenkins-x/jx-logging/v3 v3.1.0 // indirect
+	github.com/jenkins-x/jx-logging/v3 v3.1.1 // indirect
 	github.com/jenkins-x/lighthouse v1.24.2 // indirect
 	github.com/jenkins-x/logrus-stackdriver-formatter v0.2.7 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
