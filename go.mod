@@ -4,7 +4,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/blevesearch/bleve/v2 v2.6.0
 	github.com/gorilla/mux v1.8.1
-	github.com/jenkins-x-plugins/jx-pipeline v0.7.53
+	github.com/jenkins-x-plugins/jx-pipeline v0.7.54
 	github.com/jenkins-x/jx-api/v4 v4.8.6
 	github.com/jenkins-x/jx-helpers/v3 v3.11.7
 	github.com/mitchellh/go-homedir v1.1.0
@@ -110,7 +110,7 @@ require (
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.9.0 // indirect
 	github.com/go-git/go-git/v5 v5.19.2 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
